@@ -5,14 +5,13 @@ let pinCode = "";
 
 const API_URL = '/api/data';
 
-document.addEventListener('DOMContentLoaded', async () => {
+async function refreshData() {
     try {
         const response = await fetch(API_URL);
         if (!response.ok) throw new Error('Failed to load data');
         
         const rawData = await response.json();
         const HEIGHT_M = 1.8542; // 6'1"
-        // Sort oldest to newest and calculate missing BMI
         fullData = rawData.sort((a, b) => a.timestamp - b.timestamp).map(d => {
             if (!d.bmi && d.weight_kg) {
                 d.bmi = parseFloat((d.weight_kg / (HEIGHT_M * HEIGHT_M)).toFixed(1));
@@ -25,26 +24,34 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Setup filter buttons
-        const buttons = document.querySelectorAll('.time-filter');
-        buttons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                // Update active state
-                buttons.forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-                
-                // Render charts for range
-                const range = e.target.getAttribute('data-range');
-                renderCharts(range);
-            });
-        });
+        const activeBtn = document.querySelector('.time-filter.active');
+        const activeRange = activeBtn ? activeBtn.getAttribute('data-range') : '90';
+        renderCharts(activeRange);
 
-        // Default to 90 days view
-        renderCharts('90');
-
+        if (isAuthorized) {
+            populateTable();
+        }
     } catch (error) {
         console.error("Error loading dashboard data:", error);
     }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await refreshData();
+
+    // Setup filter buttons
+    const buttons = document.querySelectorAll('.time-filter');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            // Update active state
+            buttons.forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            
+            // Render charts for range
+            const range = e.target.getAttribute('data-range');
+            renderCharts(range);
+        });
+    });
 });
 
 function renderCharts(daysStr) {
@@ -343,8 +350,7 @@ if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeModal);
                 body: JSON.stringify(payload)
             });
             if (!response.ok) throw new Error("Unauthorized or server error.");
-            alert("Record updated!");
-            location.reload();
+            refreshData();
         } catch(e) {
             alert(e.message);
         }
@@ -361,8 +367,7 @@ if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeModal);
                 }
             });
             if (!response.ok) throw new Error("Unauthorized or server error.");
-            alert("Record deleted!");
-            location.reload();
+            refreshData();
         } catch(e) {
             alert(e.message);
         }
@@ -402,8 +407,11 @@ if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeModal);
                 body: JSON.stringify(payload)
             });
             if (!response.ok) throw new Error("Unauthorized or server error.");
-            alert("New record added!");
-            location.reload();
+            document.getElementById('new-weight').value = '';
+            document.getElementById('new-fat').value = '';
+            document.getElementById('new-visceral').value = '';
+            document.getElementById('new-bmi').value = '';
+            refreshData();
         } catch(e) {
             alert(e.message);
         }
