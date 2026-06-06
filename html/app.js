@@ -129,7 +129,7 @@ function renderCharts(daysStr) {
 
     // 1. Main Weight Chart
     const ctxWeight = document.getElementById('weightChart').getContext('2d');
-    const weightGradient = createGradient(ctxWeight, 'rgba(59, 130, 246, 0.15)', 'rgba(59, 130, 246, 0.0)');
+    const weightGradient = createGradient(ctxWeight, 'rgba(148, 187, 165, 0.25)', 'rgba(148, 187, 165, 0.0)');
     
     charts['weight'] = new Chart(ctxWeight, {
         type: 'line',
@@ -138,11 +138,11 @@ function renderCharts(daysStr) {
             datasets: [{
                 label: 'Weight (kg)',
                 data: weights,
-                borderColor: '#475569', // Slate blue
+                borderColor: '#789f89', // Sage active
                 backgroundColor: weightGradient,
                 borderWidth: 3,
                 pointBackgroundColor: '#ffffff',
-                pointBorderColor: '#475569',
+                pointBorderColor: '#789f89',
                 pointBorderWidth: 2,
                 pointRadius: dataToRender.length > 50 ? 0 : 4, // Hide points if too crowded
                 pointHoverRadius: 6,
@@ -237,9 +237,9 @@ function renderCharts(daysStr) {
     });
 
     // 2. Mini Charts
-    charts['bodyFat'] = new Chart(document.getElementById('bodyFatChart').getContext('2d'), miniChartConfig(bodyFats, '#94a3b8'));
-    charts['bmi'] = new Chart(document.getElementById('bmiChart').getContext('2d'), miniChartConfig(bmis, '#94a3b8'));
-    charts['visceral'] = new Chart(document.getElementById('visceralChart').getContext('2d'), miniChartConfig(visceralFats, '#94a3b8'));
+    charts['bodyFat'] = new Chart(document.getElementById('bodyFatChart').getContext('2d'), miniChartConfig(bodyFats, '#94bba5'));
+    charts['bmi'] = new Chart(document.getElementById('bmiChart').getContext('2d'), miniChartConfig(bmis, '#94bba5'));
+    charts['visceral'] = new Chart(document.getElementById('visceralChart').getContext('2d'), miniChartConfig(visceralFats, '#94bba5'));
 }
 
 // Modal Logic
