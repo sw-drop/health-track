@@ -236,63 +236,42 @@ function renderCharts(daysStr) {
 }
 
 // Modal Logic
-const authBtn = document.getElementById('auth-btn');
 const editBtn = document.getElementById('edit-data-btn');
-const lockBtn = document.getElementById('lock-btn');
 const modal = document.getElementById('edit-modal');
 const closeBtn = document.getElementById('close-modal-btn');
 const cancelModalBtn = document.getElementById('cancel-modal-btn');
 
-if (authBtn) {
-    authBtn.addEventListener('click', async () => {
-        const inputPin = prompt("Enter PIN code to unlock dashboard:");
-        if (inputPin) {
-            try {
-                const response = await fetch('/api/verify', {
-                    method: 'POST',
-                    headers: { 'X-PIN-Code': inputPin }
-                });
-                if (response.ok) {
-                    isAuthorized = true;
-                    pinCode = inputPin;
-                    
-                    authBtn.classList.add('hidden');
-                    editBtn.classList.remove('hidden');
-                    lockBtn.classList.remove('hidden');
-                    
-                    // Re-render charts to show true values
-                    const activeBtn = document.querySelector('.time-filter.active');
-                    const activeRange = activeBtn ? activeBtn.getAttribute('data-range') : '90';
-                    renderCharts(activeRange);
-                } else {
-                    alert("Incorrect PIN");
-                }
-            } catch(e) {
-                alert("Error verifying PIN");
-            }
-        }
-    });
-}
-
-if (lockBtn) {
-    lockBtn.addEventListener('click', () => {
-        isAuthorized = false;
-        pinCode = "";
-        
-        authBtn.classList.remove('hidden');
-        editBtn.classList.add('hidden');
-        lockBtn.classList.add('hidden');
-        
-        // Re-render charts to hide true values
-        const activeBtn = document.querySelector('.time-filter.active');
-        const activeRange = activeBtn ? activeBtn.getAttribute('data-range') : '90';
-        renderCharts(activeRange);
-    });
-}
-
 if (editBtn) {
-    editBtn.addEventListener('click', () => {
-        if (isAuthorized) {
+    editBtn.addEventListener('click', async () => {
+        if (!isAuthorized) {
+            const inputPin = prompt("Enter PIN code to unlock dashboard:");
+            if (inputPin) {
+                try {
+                    const response = await fetch('/api/verify', {
+                        method: 'POST',
+                        headers: { 'X-PIN-Code': inputPin }
+                    });
+                    if (response.ok) {
+                        isAuthorized = true;
+                        pinCode = inputPin;
+                        
+                        // Transform the lock button into an edit button
+                        editBtn.textContent = 'Edit';
+                        
+                        // Re-render charts to show true values
+                        const activeBtn = document.querySelector('.time-filter.active');
+                        const activeRange = activeBtn ? activeBtn.getAttribute('data-range') : '90';
+                        renderCharts(activeRange);
+                        // Notice: We intentionally do NOT open the modal here.
+                    } else {
+                        alert("Incorrect PIN");
+                    }
+                } catch(e) {
+                    alert("Error verifying PIN");
+                }
+            }
+        } else {
+            // Already unlocked, open the modal to edit records
             populateTable();
             const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
