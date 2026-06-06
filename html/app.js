@@ -322,14 +322,14 @@ if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeModal);
             const b = record.bmi !== undefined ? record.bmi : '';
 
             tr.innerHTML = `
-                <td style="font-size:0.8rem; max-width:120px;">${d.toLocaleString()}</td>
-                <td><input type="number" step="0.1" value="${w}" id="w-${record.timestamp}" style="width: 55px; padding: 2px;"></td>
-                <td><input type="number" step="0.1" value="${f}" id="f-${record.timestamp}" style="width: 55px; padding: 2px;"></td>
-                <td><input type="number" step="0.1" value="${v}" id="v-${record.timestamp}" style="width: 55px; padding: 2px;"></td>
-                <td><input type="number" step="0.1" value="${b}" id="b-${record.timestamp}" style="width: 55px; padding: 2px;"></td>
+                <td style="font-size:0.8rem; max-width:140px;">${d.toLocaleString()}</td>
+                <td><input type="number" step="0.1" value="${w}" id="w-${record.timestamp}" style="width: 75px; padding: 4px;"></td>
+                <td><input type="number" step="0.1" value="${f}" id="f-${record.timestamp}" style="width: 75px; padding: 4px;"></td>
+                <td><input type="number" step="0.1" value="${v}" id="v-${record.timestamp}" style="width: 75px; padding: 4px;"></td>
+                <td><input type="number" step="0.1" value="${b}" id="b-${record.timestamp}" style="width: 75px; padding: 4px;"></td>
                 <td style="white-space:nowrap;">
-                    <button class="btn-sm" onclick="editRecord(${record.timestamp})">Save</button>
-                    <button class="btn-sm" onclick="deleteRecord(${record.timestamp})" style="background: #ef4444; color: white;">Del</button>
+                    <button class="btn-sm" style="padding: 4px 8px;" onclick="editRecord(${record.timestamp})">Save</button>
+                    <button class="btn-sm" style="background: #ef4444; color: white; padding: 4px 8px;" onclick="deleteRecord(${record.timestamp})">Del</button>
                 </td>
             `;
             tbody.appendChild(tr);

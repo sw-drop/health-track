@@ -250,8 +250,8 @@ body {
 }
 
 .modal-content {
-    width: 90%;
-    max-width: 900px;
+    width: 95%;
+    max-width: 1000px;
     max-height: 80vh;
     display: flex;
     flex-direction: column;
@@ -278,6 +278,7 @@ body {
 
 .modal-body {
     overflow-y: auto;
+    overflow-x: auto;
 }
 
 /* Data Table */
