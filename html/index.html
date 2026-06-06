@@ -16,7 +16,9 @@
                     <h1>Health Hub</h1>
                 </div>
                 <div class="user-profile">
-                    <button id="edit-data-btn" class="btn-outline">Edit Data</button>
+                    <button id="auth-btn" class="btn-outline">Unlock</button>
+                    <button id="edit-data-btn" class="btn-outline hidden">Edit</button>
+                    <button id="lock-btn" class="btn-outline hidden">Lock</button>
                     <span>Gary</span>
                     <div class="avatar">G</div>
                 </div>
@@ -32,11 +34,11 @@
                         <div class="current-stat" id="current-weight">-- kg</div>
                     </div>
                     <div class="time-filters">
-                        <button class="time-filter" data-range="7">7D</button>
-                        <button class="time-filter" data-range="30">30D</button>
-                        <button class="time-filter active" data-range="90">90D</button>
-                        <button class="time-filter" data-range="365">1Y</button>
                         <button class="time-filter" data-range="all">MAX</button>
+                        <button class="time-filter" data-range="365">1Y</button>
+                        <button class="time-filter active" data-range="90">90D</button>
+                        <button class="time-filter" data-range="30">30D</button>
+                        <button class="time-filter" data-range="7">7D</button>
                     </div>
                 </div>
                 <div class="chart-container">
@@ -104,6 +106,9 @@
                         <!-- Rows injected via JS -->
                     </tbody>
                 </table>
+            </div>
+            <div class="modal-footer" style="padding: 1rem 2rem; border-top: 1px solid var(--accent-blue-light); display: flex; justify-content: flex-end;">
+                <button id="cancel-modal-btn" class="btn-outline">Cancel</button>
             </div>
         </div>
     </div>

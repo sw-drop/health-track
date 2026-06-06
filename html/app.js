@@ -236,41 +236,63 @@ function renderCharts(daysStr) {
 }
 
 // Modal Logic
+const authBtn = document.getElementById('auth-btn');
 const editBtn = document.getElementById('edit-data-btn');
+const lockBtn = document.getElementById('lock-btn');
 const modal = document.getElementById('edit-modal');
 const closeBtn = document.getElementById('close-modal-btn');
-if(editBtn) {
-    editBtn.addEventListener('click', async () => {
-        if (!isAuthorized) {
-            const inputPin = prompt("Enter PIN code to manage data:");
-            if (inputPin) {
-                try {
-                    const response = await fetch('/api/verify', {
-                        method: 'POST',
-                        headers: { 'X-PIN-Code': inputPin }
-                    });
-                    if (response.ok) {
-                        isAuthorized = true;
-                        pinCode = inputPin;
-                        
-                        // Re-render charts
-                        const activeBtn = document.querySelector('.time-filter.active');
-                        const activeRange = activeBtn ? activeBtn.getAttribute('data-range') : '90';
-                        renderCharts(activeRange);
-                        
-                        populateTable();
-                        const now = new Date();
-                        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-                        document.getElementById('new-datetime').value = now.toISOString().slice(0, 16);
-                        modal.classList.remove('hidden');
-                    } else {
-                        alert("Incorrect PIN");
-                    }
-                } catch(e) {
-                    alert("Error verifying PIN");
+const cancelModalBtn = document.getElementById('cancel-modal-btn');
+
+if (authBtn) {
+    authBtn.addEventListener('click', async () => {
+        const inputPin = prompt("Enter PIN code to unlock dashboard:");
+        if (inputPin) {
+            try {
+                const response = await fetch('/api/verify', {
+                    method: 'POST',
+                    headers: { 'X-PIN-Code': inputPin }
+                });
+                if (response.ok) {
+                    isAuthorized = true;
+                    pinCode = inputPin;
+                    
+                    authBtn.classList.add('hidden');
+                    editBtn.classList.remove('hidden');
+                    lockBtn.classList.remove('hidden');
+                    
+                    // Re-render charts to show true values
+                    const activeBtn = document.querySelector('.time-filter.active');
+                    const activeRange = activeBtn ? activeBtn.getAttribute('data-range') : '90';
+                    renderCharts(activeRange);
+                } else {
+                    alert("Incorrect PIN");
                 }
+            } catch(e) {
+                alert("Error verifying PIN");
             }
-        } else {
+        }
+    });
+}
+
+if (lockBtn) {
+    lockBtn.addEventListener('click', () => {
+        isAuthorized = false;
+        pinCode = "";
+        
+        authBtn.classList.remove('hidden');
+        editBtn.classList.add('hidden');
+        lockBtn.classList.add('hidden');
+        
+        // Re-render charts to hide true values
+        const activeBtn = document.querySelector('.time-filter.active');
+        const activeRange = activeBtn ? activeBtn.getAttribute('data-range') : '90';
+        renderCharts(activeRange);
+    });
+}
+
+if (editBtn) {
+    editBtn.addEventListener('click', () => {
+        if (isAuthorized) {
             populateTable();
             const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -280,11 +302,10 @@ if(editBtn) {
     });
 }
 
-if(closeBtn) {
-    closeBtn.addEventListener('click', () => {
-        modal.classList.add('hidden');
-    });
-}
+const closeModal = () => modal.classList.add('hidden');
+
+if (closeBtn) closeBtn.addEventListener('click', closeModal);
+if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeModal);
 
     function populateTable() {
         const tbody = document.getElementById('data-table-body');
