@@ -127,11 +127,11 @@ async def scan_loop():
                 except asyncio.QueueFull:
                     pass
 
-    scanner = BleakScanner(detection_callback, adapter="hci0", scanning_mode="active")
+    scanner = BleakScanner(detection_callback, adapter="hci1", scanning_mode="active")
     
     # Run the scanner
     asyncio.create_task(scanner.start())
-    logging.info("Scanner started successfully on hci0. Listening indefinitely...")
+    logging.info("Scanner started successfully on hci1. Listening indefinitely...")
     
     while True:
         try:
