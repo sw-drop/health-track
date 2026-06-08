@@ -111,6 +111,11 @@ async def scan_loop():
 
     def detection_callback(device, adv_data):
         name = device.name or adv_data.local_name or ""
+        
+        # Temporary debug: log all relatively strong signals to see what's broadcasting
+        if device.rssi > -80:
+            logging.info(f"[DEBUG SCAN] {device.address} ({name}) RSSI: {device.rssi}")
+            
         if "eufy" in name.lower() or "smart scale" in name.lower() or device.address.startswith("BC:0F:B7"):
             logging.info(f"Raw Eufy Packet Received: {device.address} RSSI: {device.rssi} dBm | Name: {name}")
             
