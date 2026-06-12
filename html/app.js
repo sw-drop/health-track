@@ -114,6 +114,7 @@ async function initDashboard() {
         if (e.message !== 'Unauthorized') {
             document.getElementById('loading').innerHTML = 'Error loading metrics: ' + e.message;
         }
+        throw e; // RE-THROW so the caller knows it failed!
     }
 }
 
