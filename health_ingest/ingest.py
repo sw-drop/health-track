@@ -60,13 +60,30 @@ def main():
                             elem.clear()
                             continue
 
-                        # Some records are non-numeric (like SleepAnalysis)
-                        # We try to parse as float, if it fails, we store as string tag or skip depending on type.
                         try:
                             val = float(value_str)
                         except ValueError:
-                            elem.clear()
-                            continue
+                            end_date = elem.get('endDate')
+                            if start_date and end_date:
+                                try:
+                                    from datetime import datetime
+                                    # Apple Health format: "2020-11-20 07:11:00 +0100"
+                                    fmt = "%Y-%m-%d %H:%M:%S %z"
+                                    start_dt = datetime.strptime(start_date, fmt)
+                                    end_dt = datetime.strptime(end_date, fmt)
+                                    val = (end_dt - start_dt).total_seconds() / 60.0
+                                    unit = "min"
+                                    
+                                    # Differentiate states (e.g., SleepAnalysisAsleep vs SleepAnalysisInBed)
+                                    clean_val = value_str.replace('HKCategoryValue', '').replace(record_type, '')
+                                    if clean_val:
+                                        record_type = f"{record_type}_{clean_val}"
+                                except Exception:
+                                    elem.clear()
+                                    continue
+                            else:
+                                elem.clear()
+                                continue
                             
                         point = Point("health_record") \
                             .tag("type", record_type) \
