@@ -22,7 +22,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--spacing);
+    margin-bottom: 1rem;
     padding: 0 var(--spacing);
 }
 
@@ -34,17 +34,17 @@ h1 {
 
 .controls {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
 }
 
 .pill-btn {
     background-color: var(--card-bg);
     border: 1px solid #eaeaea;
     color: var(--text-color);
-    padding: 0.5rem 1.5rem;
+    padding: 0.4rem 1rem;
     border-radius: 50px;
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 0.85rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 2px 10px rgba(0,0,0,0.02);
@@ -55,6 +55,48 @@ h1 {
     color: var(--accent-green);
 }
 
+.pill-btn.active {
+    background-color: var(--accent-green);
+    color: white;
+    border-color: var(--accent-green);
+}
+
+/* Tabs */
+.tabs-container {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0 var(--spacing);
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.tabs-container::-webkit-scrollbar {
+    display: none;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 1.05rem;
+    font-weight: 500;
+    padding: 0.5rem 0;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+    color: var(--text-color);
+}
+
+.tab-btn.active {
+    color: var(--accent-green);
+    border-bottom-color: var(--accent-green);
+}
+
+/* Grid & Cards */
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
@@ -76,28 +118,52 @@ h1 {
     box-shadow: 0 12px 40px rgba(0,0,0,0.06);
 }
 
-.panel-header {
+.panel-title {
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: #666;
+    margin: 0 0 0.5rem 0;
+}
+
+.panel-value-container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    align-items: baseline;
+    gap: 1rem;
     margin-bottom: 1rem;
 }
 
-.panel-title {
+.panel-value {
+    font-size: 2rem;
     font-weight: 600;
-    font-size: 1.1rem;
-    margin: 0;
+    color: var(--text-color);
 }
 
-.panel-value {
-    font-size: 1.5rem;
-    font-weight: 300;
-    color: var(--accent-green);
+/* Trend Indicators */
+.trend-indicator {
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+}
+
+.trend-up {
+    background-color: rgba(46, 204, 113, 0.15);
+    color: #27ae60;
+}
+
+.trend-down {
+    background-color: rgba(231, 76, 60, 0.15);
+    color: #c0392b;
+}
+
+.trend-neutral {
+    background-color: rgba(149, 165, 166, 0.15);
+    color: #7f8c8d;
 }
 
 .chart-container {
     position: relative;
-    height: 250px;
+    height: 200px;
     width: 100%;
 }
 

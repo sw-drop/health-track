@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
 from influxdb_client import InfluxDBClient
 import os
@@ -13,7 +13,6 @@ INFLUX_BUCKET = os.getenv("INFLUX_BUCKET", "health")
 
 client = InfluxDBClient(url=INFLUX_URL, token=INFLUX_TOKEN, org=INFLUX_ORG)
 
-# Serve static HTML files from the mounted /html directory
 @app.route('/')
 def index():
     return send_from_directory('/html', 'index.html')
@@ -24,7 +23,6 @@ def static_files(path):
 
 @app.route('/api/metrics', methods=['GET'])
 def get_metrics():
-    # Fetch distinct metrics that exist in the database
     query = f'''
         import "influxdata/influxdb/schema"
         schema.measurementTagValues(bucket: "{INFLUX_BUCKET}", measurement: "health_record", tag: "type")
@@ -41,8 +39,16 @@ def get_metrics():
 
 @app.route('/api/data/<metric_type>', methods=['GET'])
 def get_data(metric_type):
-    # Fetch last 5 years of data, aggregated by day to keep the chart performant
-    # Determine aggregation function based on metric type
+    time_range = request.args.get('range', '1M')
+    range_map = {
+        '1W': '-7d',
+        '1M': '-30d',
+        '6M': '-180d',
+        '1Y': '-1y',
+        'ALL': '-10y'
+    }
+    flux_start = range_map.get(time_range, '-30d')
+
     agg_fn = "mean"
     sum_metrics = [
         "StepCount", "ActiveEnergyBurned", "BasalEnergyBurned", "FlightsClimbed", 
@@ -53,7 +59,7 @@ def get_data(metric_type):
 
     query = f'''
         from(bucket: "{INFLUX_BUCKET}")
-          |> range(start: -5y)
+          |> range(start: {flux_start})
           |> filter(fn: (r) => r["_measurement"] == "health_record")
           |> filter(fn: (r) => r["type"] == "{metric_type}")
           |> filter(fn: (r) => r["_field"] == "value")
