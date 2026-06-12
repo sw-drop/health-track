@@ -1,0 +1,12 @@
+{
+  "domain": "eufylife_api",
+  "name": "EufyLife API",
+  "codeowners": ["@m4ary"],
+  "config_flow": true,
+  "documentation": "https://github.com/m4ary/eufylife-api-hacs",
+  "issue_tracker": "https://github.com/m4ary/eufylife-api-hacs/issues",
+  "integration_type": "device",
+  "iot_class": "cloud_polling",
+  "requirements": ["requests>=2.25.0"],
+  "version": "2.2.0"
+} 
