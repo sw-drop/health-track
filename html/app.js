@@ -61,7 +61,10 @@ async function initDashboard() {
     setupEventListeners();
     try {
         const res = await fetch(`${API_BASE}/metrics`);
-        allAvailableMetrics = await res.json();
+        const rawMetrics = await res.json();
+        
+        // Explicitly hide metrics the user doesn't want to track
+        allAvailableMetrics = rawMetrics.filter(m => m !== 'Height');
         
         document.getElementById('loading').style.display = 'none';
         renderCurrentTab();
