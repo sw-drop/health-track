@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  eufy-export:
+    build: .
+    container_name: eufy-export
+    restart: unless-stopped
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+    env_file:
+      - .env
+    volumes:
+      - ./data:/data
+
+  web:
+    image: nginx:alpine
+    container_name: eufy-dashboard
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./html:/usr/share/nginx/html
+      - ./data:/usr/share/nginx/html/data:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro

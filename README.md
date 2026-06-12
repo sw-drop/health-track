@@ -25,6 +25,7 @@ During development, we discovered several critical behaviors about the Eufy T912
 2. **Battery Characteristic Crash**: Attempting to read the battery characteristic on this scale throws a fatal `UUID None could not be found` error, which aborts the connection. The scanner script explicitly catches and bypasses this specific exception to keep the connection alive long enough to read the weight.
 3. **RSSI Connection Stealing**: If the server connects to the scale from too far away, it prevents the user's phone app from connecting. To prevent this, the scanner drops any advertisements with a signal strength weaker than `-80 dBm`.
 4. **Hardware Adapters**: The DietPi server has two Bluetooth adapters. The internal adapter (`hci0`) is physically unstable and throws silent `Input/output error` crashes. The scanner is hardcoded to use the external USB dongle (`hci1`) which is highly reliable.
+5. **SSD Migration & UAS Bugs**: Moving the Docker data directory to an external USB SSD caused severe I/O hangs and `RWLayer unexpectedly nil` container crashes. This was traced to the JMicron USB controllers (JMS578 and JMS561U) having broken UAS (USB Attached SCSI) implementations on Linux. This was resolved by appending `usb-storage.quirks=152d:0578:u,152d:1561:u` to `GRUB_CMDLINE_LINUX_DEFAULT` in `/etc/default/grub` to force the stable `usb-storage` driver instead. **Note:** When moving the underlying Docker volume, running `docker compose down && docker compose up -d` is required to cleanly rebuild container storage layers on the new drive.
 
 ## Deployment Pipeline (Important!)
 
@@ -53,8 +54,9 @@ The dashboard visualizes four core health metrics:
 *Note: Outdated metrics (such as Muscle Mass and Bone Mass) have been removed from the UI to ensure a focused dashboard.*
 
 ### Missing Data & Chart Rendering
-- Incomplete records (e.g., records created with only weight data or missing visceral/body fat) have missing parameters set to `null` (not `0` or `0.0`) in the database.
-- The frontend charts are configured with Chart.js's `spanGaps: true`. This allows line charts to connect smoothly across missing data points rather than plunging to zero or causing Y-axis scaling issues.
+- **Chronological X-Axis**: The charts utilize the `chartjs-adapter-date-fns` library to enforce a strict `time` scale instead of a `category` scale. This ensures long historical gaps (e.g., 10 years of missing data between 1992 and 2002) are rendered with visually proportional horizontal spacing, rather than compressing decades of time into equal-width columns.
+- **Null Value Mapping**: Incomplete records (e.g., records created with only weight data or missing visceral/body fat) have missing parameters set to `null` (not `0` or `0.0`) in the database.
+- **Span Gaps**: The frontend charts are configured with Chart.js's `spanGaps: true`. This allows line charts to connect smoothly across missing data points rather than plunging to zero or causing Y-axis scaling issues.
 
 ### Cloudflare Caching & Cache-Busting
 Because Cloudflare aggressively caches frontend assets (`app.js`, `styles.css`), frontend changes will not immediately take effect on the live environment without cache-busting.
