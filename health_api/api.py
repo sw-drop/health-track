@@ -42,14 +42,23 @@ def get_metrics():
 @app.route('/api/data/<metric_type>', methods=['GET'])
 def get_data(metric_type):
     # Fetch last 5 years of data, aggregated by day to keep the chart performant
+    # Determine aggregation function based on metric type
+    agg_fn = "mean"
+    sum_metrics = [
+        "StepCount", "ActiveEnergyBurned", "BasalEnergyBurned", "FlightsClimbed", 
+        "DistanceWalkingRunning", "AppleStandTime", "AppleExerciseTime", "TimeInDaylight"
+    ]
+    if any(m in metric_type for m in sum_metrics) or "SleepAnalysis" in metric_type:
+        agg_fn = "sum"
+
     query = f'''
         from(bucket: "{INFLUX_BUCKET}")
           |> range(start: -5y)
           |> filter(fn: (r) => r["_measurement"] == "health_record")
           |> filter(fn: (r) => r["type"] == "{metric_type}")
           |> filter(fn: (r) => r["_field"] == "value")
-          |> aggregateWindow(every: 1d, fn: mean, createEmpty: false)
-          |> yield(name: "mean")
+          |> aggregateWindow(every: 1d, fn: {agg_fn}, createEmpty: false)
+          |> yield(name: "{agg_fn}")
     '''
     try:
         tables = client.query_api().query(query, org=INFLUX_ORG)

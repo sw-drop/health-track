@@ -78,8 +78,15 @@ async function fetchDataAndRender(metric, canvasId) {
         const isBar = ['StepCount', 'ActiveEnergyBurned', 'FlightsClimbed'].includes(metric);
         
         let displayVal = latestVal;
-        if (latestVal % 1 !== 0) displayVal = latestVal.toFixed(1);
-        document.getElementById(`val-${metric}`).textContent = `${displayVal} ${unit}`;
+        let displayUnit = unit;
+
+        if (unit === 'min' && latestVal > 60) {
+            displayVal = latestVal / 60.0;
+            displayUnit = 'hr';
+        }
+
+        if (displayVal % 1 !== 0) displayVal = displayVal.toFixed(1);
+        document.getElementById(`val-${metric}`).textContent = `${displayVal} ${displayUnit}`;
 
         const chartData = dataPoints.map(p => ({ x: new Date(p.time), y: p.value }));
 
