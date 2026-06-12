@@ -10,11 +10,11 @@ git push
 
 echo "--- 2. Syncing files to Eadu (DietPi) via rsync ---"
 # Syncing the new configuration and Apple_Health data (excluding the legacy backup)
-rsync -avz --exclude 'legacy_eufy' --exclude '.git' ./ Eadu:/docker/eufy/
+rsync -avz --exclude 'legacy_eufy' --exclude '.git' ./ Eadu:/mnt/ssd/docker/eufy/
 
 if [ $? -eq 0 ]; then
     echo "--- 3. Restarting containers on Eadu ---"
-    ssh Eadu 'cd /docker/eufy && docker compose down && docker compose up -d --build'
+    ssh Eadu 'cd /mnt/ssd/docker/eufy && docker compose down && docker compose up -d --build'
     echo "Deployment successfully completed!"
 else
     echo "Error pushing changes via rsync."
