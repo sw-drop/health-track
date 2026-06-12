@@ -10,8 +10,18 @@ INFLUX_URL = os.getenv("INFLUX_URL", "http://influxdb:8086")
 INFLUX_TOKEN = os.getenv("INFLUX_TOKEN", "my-super-secret-auth-token")
 INFLUX_ORG = os.getenv("INFLUX_ORG", "my-org")
 INFLUX_BUCKET = os.getenv("INFLUX_BUCKET", "health")
+PIN_CODE = os.getenv("DASHBOARD_PIN", "2364")
 
 client = InfluxDBClient(url=INFLUX_URL, token=INFLUX_TOKEN, org=INFLUX_ORG)
+
+@app.before_request
+def check_pin():
+    if request.path.startswith('/api/'):
+        if request.method == 'OPTIONS':
+            return '', 200
+        client_pin = request.headers.get('X-PIN')
+        if client_pin != PIN_CODE:
+            return jsonify({"error": "Unauthorized"}), 401
 
 @app.route('/')
 def index():

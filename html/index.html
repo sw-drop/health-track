@@ -9,7 +9,19 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 </head>
 <body>
-    <header>
+    <!-- PIN Overlay -->
+    <div id="pin-overlay" class="pin-overlay">
+        <div class="pin-box">
+            <h2>Enter PIN</h2>
+            <p>Please unlock the dashboard to view health data.</p>
+            <input type="password" id="pin-input" placeholder="••••" maxlength="4" autocomplete="off">
+            <button id="pin-submit">Unlock</button>
+            <div id="pin-error" class="pin-error"></div>
+        </div>
+    </div>
+
+    <div id="main-content" style="display: none;">
+        <header>
         <h1>Health Dashboard</h1>
         <div class="controls time-controls">
             <button class="pill-btn time-btn" data-range="1W">1W</button>
@@ -37,6 +49,7 @@
     <div class="dashboard-grid" id="dashboard-grid">
         <!-- Dynamic panels will be injected here -->
     </div>
+    </div> <!-- Close main-content -->
 
     <script src="app.js"></script>
 </body>

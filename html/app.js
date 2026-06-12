@@ -57,19 +57,63 @@ const commonOptions = {
 const sageGreen = '#8da399';
 const sageGreenLight = 'rgba(141, 163, 153, 0.2)';
 
+// Authentication
+function showPinScreen() {
+    document.getElementById('pin-overlay').style.display = 'flex';
+    document.getElementById('main-content').style.display = 'none';
+}
+
+function hidePinScreen() {
+    document.getElementById('pin-overlay').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+}
+
+async function fetchWithPin(url) {
+    const pin = localStorage.getItem('health_pin') || '';
+    const res = await fetch(url, {
+        headers: { 'X-PIN': pin }
+    });
+    if (res.status === 401) {
+        showPinScreen();
+        throw new Error('Unauthorized');
+    }
+    return res;
+}
+
+document.getElementById('pin-submit').addEventListener('click', async () => {
+    const pin = document.getElementById('pin-input').value;
+    localStorage.setItem('health_pin', pin);
+    document.getElementById('pin-error').textContent = '';
+    
+    try {
+        await initDashboard();
+    } catch (e) {
+        document.getElementById('pin-error').textContent = 'Incorrect PIN';
+        localStorage.removeItem('health_pin');
+    }
+});
+
+// Auto-submit PIN on Enter
+document.getElementById('pin-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') document.getElementById('pin-submit').click();
+});
+
 async function initDashboard() {
     setupEventListeners();
     try {
-        const res = await fetch(`${API_BASE}/metrics`);
+        const res = await fetchWithPin(`${API_BASE}/metrics`);
         const rawMetrics = await res.json();
         
         // Explicitly hide metrics the user doesn't want to track
         allAvailableMetrics = rawMetrics.filter(m => m !== 'Height');
         
+        hidePinScreen(); // Success
         document.getElementById('loading').style.display = 'none';
         renderCurrentTab();
     } catch (e) {
-        document.getElementById('loading').innerHTML = 'Error loading metrics: ' + e.message;
+        if (e.message !== 'Unauthorized') {
+            document.getElementById('loading').innerHTML = 'Error loading metrics: ' + e.message;
+        }
     }
 }
 
@@ -138,7 +182,7 @@ function renderCurrentTab() {
 
 async function fetchDataAndRender(metric, canvasId) {
     try {
-        const res = await fetch(`${API_BASE}/data/${metric}?range=${currentTimeRange}`);
+        const res = await fetchWithPin(`${API_BASE}/data/${metric}?range=${currentTimeRange}`);
         const result = await res.json();
         const dataPoints = result.data;
         const unit = result.unit || '';
