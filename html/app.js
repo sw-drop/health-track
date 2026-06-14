@@ -326,14 +326,22 @@ async function renderSleepSegmentsChart(canvasId) {
                 label: 'Sleep Score',
                 data: scoreData,
                 yAxisID: 'y2',
-                borderColor: '#34c759',
-                backgroundColor: '#34c759',
+                borderColor: '#FF2400', // Scarlet Red
+                backgroundColor: '#FF2400',
                 borderWidth: 3,
                 tension: 0.3,
                 pointRadius: 4,
-                pointHoverRadius: 6
+                pointHoverRadius: 6,
+                order: -1 // Draw on top
             });
         }
+
+        // Ensure bars are drawn underneath the line
+        activeDatasets.forEach(ds => {
+            if (ds.type !== 'line') {
+                ds.order = 1;
+            }
+        });
 
         chartInstances[canvasId] = new Chart(document.getElementById(canvasId), {
             type: 'bar',
@@ -396,7 +404,7 @@ async function renderSleepSegmentsChart(canvasId) {
                         type: 'linear',
                         position: 'right',
                         grid: { display: false },
-                        ticks: { color: '#34c759', font: {weight: 'bold'} }
+                        ticks: { color: '#FF2400', font: {weight: 'bold'} }
                     }
                 }
             }
