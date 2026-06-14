@@ -99,8 +99,8 @@ def process_workout_routes(write_api, extract_dir):
                             
                             if next_pt:
                                 speed = pt.speed_between(next_pt)
-                                p = p.field("speed", speed if speed else 0)
-                                p = p.field("distance", pt.distance_3d(next_pt))
+                                p = p.field("speed", float(speed) if speed is not None else 0.0)
+                                p = p.field("distance", float(pt.distance_3d(next_pt) or 0.0))
                                 
                             p = p.time(pt.time)
                             points.append(p)

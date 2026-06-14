@@ -4,15 +4,12 @@ from datetime import timedelta
 from typing import Any, Union
 
 
-def parse_float_with_try(v: Any) -> Union[float, int]:
-    """convert v to float or 0"""
+def parse_float_with_try(v: Any) -> float:
+    """convert v to float or 0.0"""
     try:
         return float(v)
-    except ValueError:
-        try:
-            return int(v)
-        except Exception:
-            return 0
+    except Exception:
+        return 0.0
 
 
 def parse_date_as_timestamp(v: Any) -> int:
