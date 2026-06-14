@@ -320,6 +320,23 @@ async function renderSleepSegmentsChart(canvasId) {
             return { x: dStart.getTime(), y: s.score };
         });
 
+        let lineBorderWidth = 3;
+        let linePointRadius = 4;
+        let linePointHoverRadius = 6;
+
+        if (currentTimeRange === '6M') {
+            linePointRadius = 1.5;
+            linePointHoverRadius = 4;
+        } else if (currentTimeRange === '1Y') {
+            lineBorderWidth = 2;
+            linePointRadius = 0.5;
+            linePointHoverRadius = 3;
+        } else if (currentTimeRange === 'ALL') {
+            lineBorderWidth = 1.5;
+            linePointRadius = 0;
+            linePointHoverRadius = 3;
+        }
+
         if (scoreData.length > 0) {
             activeDatasets.push({
                 type: 'line',
@@ -328,10 +345,10 @@ async function renderSleepSegmentsChart(canvasId) {
                 yAxisID: 'y2',
                 borderColor: '#FF2400', // Scarlet Red
                 backgroundColor: '#FF2400',
-                borderWidth: 3,
+                borderWidth: lineBorderWidth,
                 tension: 0.3,
-                pointRadius: 4,
-                pointHoverRadius: 6,
+                pointRadius: linePointRadius,
+                pointHoverRadius: linePointHoverRadius,
                 order: -1 // Draw on top
             });
         }
