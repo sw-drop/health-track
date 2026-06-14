@@ -157,6 +157,16 @@ function renderCurrentTab() {
 
     if (currentTab === 'Sleep') {
         grid.insertAdjacentHTML('beforeend', `
+            <div class="panel" style="grid-column: 1 / -1; display: flex; justify-content: space-around; align-items: center; padding: 2rem; background: linear-gradient(135deg, #2f4b7c, #003f5c); color: white; border-radius: 12px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 1rem; opacity: 0.8; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">Total Sleep Time</div>
+                    <div id="sleep-summary-total" style="font-size: 2.5rem; font-weight: 600;">--</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 1rem; opacity: 0.8; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">Sleep Score</div>
+                    <div id="sleep-summary-score" style="font-size: 2.5rem; font-weight: 600;">--/100</div>
+                </div>
+            </div>
             <div class="panel" style="grid-column: 1 / -1;">
                 <div class="panel-title">Chronological Sleep Phases</div>
                 <div class="chart-container" style="height: 400px;">
@@ -165,6 +175,7 @@ function renderCurrentTab() {
             </div>
         `);
         renderSleepSegmentsChart('sleep-segments-chart');
+        fetchAndRenderSleepSummary();
     }
 
     if (metricsToRender.length === 0 && currentTab !== 'Sleep') {
@@ -190,6 +201,41 @@ function renderCurrentTab() {
         `;
         grid.insertAdjacentHTML('beforeend', panelHtml);
         fetchDataAndRender(metric, panelId);
+    }
+}
+
+async function fetchAndRenderSleepSummary() {
+    try {
+        const res = await fetchWithPin(`${API_BASE}/sleep/summary`);
+        const result = await res.json();
+        
+        if (result.total_sleep_mins) {
+            const hrs = Math.floor(result.total_sleep_mins / 60);
+            const mins = result.total_sleep_mins % 60;
+            document.getElementById('sleep-summary-total').textContent = `${hrs}h ${mins}m`;
+        } else {
+            document.getElementById('sleep-summary-total').textContent = 'No Data';
+        }
+        
+        if (result.score) {
+            document.getElementById('sleep-summary-score').textContent = `${result.score}/100`;
+            
+            // Add a subtitle showing the date of the score
+            if (result.date) {
+                const dateEl = document.createElement('div');
+                dateEl.style.fontSize = '0.8rem';
+                dateEl.style.opacity = '0.7';
+                dateEl.style.marginTop = '0.5rem';
+                dateEl.textContent = `for ${result.date}`;
+                document.getElementById('sleep-summary-score').appendChild(dateEl);
+            }
+        } else {
+            document.getElementById('sleep-summary-score').textContent = 'No Data';
+        }
+    } catch (e) {
+        console.error('Failed to load sleep summary', e);
+        document.getElementById('sleep-summary-total').textContent = 'Error';
+        document.getElementById('sleep-summary-score').textContent = 'Error';
     }
 }
 

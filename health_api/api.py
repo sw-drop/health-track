@@ -126,5 +126,104 @@ def get_sleep_segments():
         import traceback
         return jsonify({"error": str(e), "trace": traceback.format_exc()}), 500
 
+@app.route('/api/sleep/summary', methods=['GET'])
+def get_sleep_summary():
+    query = f'''
+        from(bucket: "{INFLUX_BUCKET}")
+          |> range(start: -14d)
+          |> filter(fn: (r) => r["_measurement"] == "SleepAnalysis")
+          |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
+    '''
+    try:
+        tables = client.query_api().query(query, org=INFLUX_ORG)
+        segments = []
+        for table in tables:
+            for record in table.records:
+                if "start" in record.values and "stop" in record.values:
+                    segments.append({
+                        "start": record.values["start"],
+                        "stop": record.values["stop"],
+                        "state": record.values.get("state", "Unspecified")
+                    })
+        
+        if not segments:
+            return jsonify({"total_sleep_mins": 0, "score": 0})
+
+        import datetime
+        
+        # Group segments into "sleep sessions" (nights)
+        nights = {}
+        for seg in segments:
+            state = seg['state']
+            if state in ['Unspecified', 'Asleep', 'InBed']:
+                continue
+            
+            d_start = datetime.datetime.fromtimestamp(seg['start'])
+            if d_start.hour < 12:
+                session_date = (d_start - datetime.timedelta(days=1)).date()
+            else:
+                session_date = d_start.date()
+                
+            date_str = session_date.isoformat()
+            if date_str not in nights:
+                nights[date_str] = {"segments": [], "bedtime": None}
+            nights[date_str]["segments"].append(seg)
+            
+            if state in ['Core', 'Deep', 'REM']:
+                if nights[date_str]["bedtime"] is None or seg['start'] < nights[date_str]["bedtime"]:
+                    nights[date_str]["bedtime"] = seg['start']
+
+        if not nights:
+            return jsonify({"total_sleep_mins": 0, "score": 0})
+            
+        # Get the most recent night
+        sorted_dates = sorted(nights.keys())
+        last_night_str = sorted_dates[-1]
+        last_night = nights[last_night_str]
+        
+        # 1. Duration (Up to 50 points)
+        total_sleep_secs = sum(s['stop'] - s['start'] for s in last_night['segments'] if s['state'] in ['Core', 'Deep', 'REM'])
+        total_sleep_mins = total_sleep_secs / 60.0
+        duration_score = min(50, (total_sleep_mins / 480.0) * 50)
+        
+        # 2. Interruptions (Up to 20 points)
+        awake_count = len([s for s in last_night['segments'] if s['state'] == 'Awake'])
+        interruptions_score = max(0, 20 - (awake_count * 2))
+        
+        # 3. Consistency (Up to 30 points)
+        bedtimes = []
+        for d in sorted_dates[:-1]:
+            if nights[d]["bedtime"] is not None:
+                dt = datetime.datetime.fromtimestamp(nights[d]["bedtime"])
+                hour = dt.hour + dt.minute/60.0
+                if hour < 12:
+                    hour += 24
+                bedtimes.append(hour)
+                
+        consistency_score = 30
+        if bedtimes and last_night["bedtime"] is not None:
+            avg_bedtime = sum(bedtimes) / len(bedtimes)
+            dt_last = datetime.datetime.fromtimestamp(last_night["bedtime"])
+            last_hour = dt_last.hour + dt_last.minute/60.0
+            if last_hour < 12:
+                last_hour += 24
+            variance = abs(last_hour - avg_bedtime)
+            consistency_score = max(0, 30 - (variance * 10))
+            
+        total_score = round(duration_score + interruptions_score + consistency_score)
+        
+        return jsonify({
+            "total_sleep_mins": round(total_sleep_mins),
+            "score": total_score,
+            "duration_score": round(duration_score),
+            "consistency_score": round(consistency_score),
+            "interruptions_score": round(interruptions_score),
+            "date": last_night_str
+        })
+        
+    except Exception as e:
+        import traceback
+        return jsonify({"error": str(e), "trace": traceback.format_exc()}), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
