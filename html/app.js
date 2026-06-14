@@ -157,25 +157,14 @@ function renderCurrentTab() {
 
     if (currentTab === 'Sleep') {
         grid.insertAdjacentHTML('beforeend', `
-            <div class="panel" style="grid-column: 1 / -1; display: flex; justify-content: space-around; align-items: center; padding: 2rem; background: linear-gradient(135deg, #2f4b7c, #003f5c); color: white; border-radius: 12px;">
-                <div style="text-align: center;">
-                    <div style="font-size: 1rem; opacity: 0.8; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">Total Sleep Time</div>
-                    <div id="sleep-summary-total" style="font-size: 2.5rem; font-weight: 600;">--</div>
-                </div>
-                <div style="text-align: center;">
-                    <div style="font-size: 1rem; opacity: 0.8; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">Sleep Score</div>
-                    <div id="sleep-summary-score" style="font-size: 2.5rem; font-weight: 600;">--/100</div>
-                </div>
-            </div>
             <div class="panel" style="grid-column: 1 / -1;">
-                <div class="panel-title">Chronological Sleep Phases</div>
+                <div class="panel-title">Chronological Sleep Phases (Click a day for summary)</div>
                 <div class="chart-container" style="height: 400px;">
                     <canvas id="sleep-segments-chart"></canvas>
                 </div>
             </div>
         `);
         renderSleepSegmentsChart('sleep-segments-chart');
-        fetchAndRenderSleepSummary();
     }
 
     if (metricsToRender.length === 0 && currentTab !== 'Sleep') {
@@ -204,39 +193,51 @@ function renderCurrentTab() {
     }
 }
 
-async function fetchAndRenderSleepSummary() {
-    try {
-        const res = await fetchWithPin(`${API_BASE}/sleep/summary`);
-        const result = await res.json();
-        
-        if (result.total_sleep_mins) {
-            const hrs = Math.floor(result.total_sleep_mins / 60);
-            const mins = result.total_sleep_mins % 60;
-            document.getElementById('sleep-summary-total').textContent = `${hrs}h ${mins}m`;
-        } else {
-            document.getElementById('sleep-summary-total').textContent = 'No Data';
-        }
-        
-        if (result.score) {
-            document.getElementById('sleep-summary-score').textContent = `${result.score}/100`;
-            
-            // Add a subtitle showing the date of the score
-            if (result.date) {
-                const dateEl = document.createElement('div');
-                dateEl.style.fontSize = '0.8rem';
-                dateEl.style.opacity = '0.7';
-                dateEl.style.marginTop = '0.5rem';
-                dateEl.textContent = `for ${result.date}`;
-                document.getElementById('sleep-summary-score').appendChild(dateEl);
-            }
-        } else {
-            document.getElementById('sleep-summary-score').textContent = 'No Data';
-        }
-    } catch (e) {
-        console.error('Failed to load sleep summary', e);
-        document.getElementById('sleep-summary-total').textContent = 'Error';
-        document.getElementById('sleep-summary-score').textContent = 'Error';
-    }
+function showSleepSummaryModal(summary) {
+    const existing = document.getElementById('sleep-summary-modal');
+    if (existing) existing.remove();
+
+    const mHr = (mins) => `${Math.floor(mins/60)}h ${mins%60}m`;
+    
+    const html = `
+        <div id="sleep-summary-modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;" onclick="this.remove()">
+            <div style="background: #1e1e1e; padding: 2rem; border-radius: 12px; width: 350px; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" onclick="event.stopPropagation()">
+                <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 1rem; border-bottom: 1px solid #333; padding-bottom: 0.5rem;">Sleep Summary: ${summary.date}</div>
+                
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <div>
+                        <div style="font-size: 0.8rem; color: #aaa;">Total Sleep</div>
+                        <div style="font-size: 1.5rem; font-weight: bold;">${mHr(summary.total_sleep_mins)}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.8rem; color: #aaa;">Sleep Score</div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #34c759;">${summary.score}/100</div>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <div style="font-size: 0.8rem; color: #5d8cc9; font-weight: bold;">Deep</div>
+                        <div>${mHr(summary.deep_mins)}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; color: #3399FF; font-weight: bold;">Core</div>
+                        <div>${mHr(summary.core_mins)}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; color: #9B51E0; font-weight: bold;">REM</div>
+                        <div>${mHr(summary.rem_mins)}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; color: #FF9500; font-weight: bold;">Awake</div>
+                        <div>${mHr(summary.awake_mins)}</div>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('sleep-summary-modal').remove()" style="margin-top: 1.5rem; width: 100%; padding: 0.5rem; background: #333; color: white; border: none; border-radius: 6px; cursor: pointer;">Close</button>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', html);
 }
 
 async function renderSleepSegmentsChart(canvasId) {
@@ -245,15 +246,19 @@ async function renderSleepSegmentsChart(canvasId) {
         const result = await res.json();
         const segments = result.data;
 
+        const sumRes = await fetchWithPin(`${API_BASE}/sleep/summary?range=${currentTimeRange}`);
+        const sumResult = await sumRes.json();
+        const summaryData = sumResult.data || [];
+
         if (!segments || segments.length === 0) {
             return;
         }
 
         const colors = {
-            'Deep': '#003f5c',
-            'Core': '#2f4b7c',
-            'REM': '#665191',
-            'Awake': '#ff7c43',
+            'Deep': '#1B2A47',
+            'Core': '#3399FF',
+            'REM': '#9B51E0',
+            'Awake': '#FF9500',
             'Unspecified': '#a05195'
         };
 
@@ -308,17 +313,54 @@ async function renderSleepSegmentsChart(canvasId) {
         // Filter out empty datasets
         const activeDatasets = Object.values(datasets).filter(ds => ds.data.length > 0);
 
+        // Add Sleep Score Line
+        const scoreData = summaryData.map(s => {
+            const dStart = new Date(s.date);
+            dStart.setHours(0,0,0,0);
+            return { x: dStart.getTime(), y: s.score };
+        });
+
+        if (scoreData.length > 0) {
+            activeDatasets.push({
+                type: 'line',
+                label: 'Sleep Score',
+                data: scoreData,
+                yAxisID: 'y2',
+                borderColor: '#34c759',
+                backgroundColor: '#34c759',
+                borderWidth: 3,
+                tension: 0.3,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            });
+        }
+
         chartInstances[canvasId] = new Chart(document.getElementById(canvasId), {
             type: 'bar',
             data: { datasets: activeDatasets },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                onClick: (e, elements) => {
+                    if (elements.length > 0) {
+                        const el = elements[0];
+                        const ds = activeDatasets[el.datasetIndex];
+                        const xDate = ds.data[el.index].x;
+                        const dateStr = new Date(xDate).toISOString().split('T')[0];
+                        const summary = summaryData.find(s => s.date === dateStr);
+                        if (summary) {
+                            showSleepSummaryModal(summary);
+                        }
+                    }
+                },
                 plugins: {
                     legend: { display: true, position: 'top' },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
+                                if (context.dataset.type === 'line') {
+                                    return `Sleep Score: ${context.raw.y}`;
+                                }
                                 const y = context.raw.y;
                                 const min = new Date(y[0]).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                                 const max = new Date(y[1]).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
@@ -338,6 +380,7 @@ async function renderSleepSegmentsChart(canvasId) {
                     },
                     y: {
                         type: 'time',
+                        position: 'left',
                         time: {
                             unit: 'hour',
                             displayFormats: { hour: 'h a' },
@@ -348,6 +391,14 @@ async function renderSleepSegmentsChart(canvasId) {
                         min: new Date(2000, 0, 1, 20, 0, 0).getTime(), // 8 PM
                         max: new Date(2000, 0, 2, 12, 0, 0).getTime(), // 12 PM
                         reverse: false // 8 PM at bottom, 12 PM at top
+                    },
+                    y2: {
+                        type: 'linear',
+                        position: 'right',
+                        min: 0,
+                        max: 100,
+                        grid: { display: false },
+                        ticks: { color: '#34c759', font: {weight: 'bold'} }
                     }
                 }
             }
