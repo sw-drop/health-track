@@ -128,10 +128,18 @@ def get_sleep_segments():
 
 @app.route('/api/sleep/summary', methods=['GET'])
 def get_sleep_summary():
-    range_param = request.args.get('range', '1M')
+    time_range = request.args.get('range', '1M')
+    range_map = {
+        '1W': '-7d',
+        '1M': '-30d',
+        '6M': '-180d',
+        '1Y': '-1y',
+        'ALL': '-10y'
+    }
+    flux_start = range_map.get(time_range, '-30d')
     query = f'''
         from(bucket: "{INFLUX_BUCKET}")
-          |> range(start: -{range_param})
+          |> range(start: {flux_start})
           |> filter(fn: (r) => r["_measurement"] == "SleepAnalysis")
           |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
     '''

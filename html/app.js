@@ -395,8 +395,6 @@ async function renderSleepSegmentsChart(canvasId) {
                     y2: {
                         type: 'linear',
                         position: 'right',
-                        min: 0,
-                        max: 100,
                         grid: { display: false },
                         ticks: { color: '#34c759', font: {weight: 'bold'} }
                     }
