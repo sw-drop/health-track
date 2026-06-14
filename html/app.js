@@ -224,6 +224,11 @@ async function renderSleepSegmentsChart(canvasId) {
         }
 
         segments.forEach(seg => {
+            // Filter out the large overarching Apple Health blocks that hide the detailed phases
+            if (seg.state === 'Unspecified' || seg.state === 'Asleep') {
+                return;
+            }
+
             // X-axis: the "Sleep Session Date"
             const dStart = new Date(seg.start * 1000);
             if (dStart.getHours() < 12) {
@@ -246,10 +251,12 @@ async function renderSleepSegmentsChart(canvasId) {
             };
 
             const state = datasets[seg.state] ? seg.state : 'Unspecified';
-            datasets[state].data.push({
-                x: xDate,
-                y: [mapTimeToDummyDate(yMin), mapTimeToDummyDate(yMax)]
-            });
+            if (datasets[state]) {
+                datasets[state].data.push({
+                    x: xDate,
+                    y: [mapTimeToDummyDate(yMin), mapTimeToDummyDate(yMax)]
+                });
+            }
         });
 
         // Filter out empty datasets
@@ -281,7 +288,7 @@ async function renderSleepSegmentsChart(canvasId) {
                         offset: true,
                         grid: { display: false },
                         ticks: { color: '#999' },
-                        stacked: false // We don't want values to stack on top of each other! Floating bars handle their own Y positioning!
+                        stacked: true // Force datasets into the exact same column footprint
                     },
                     y: {
                         type: 'time',
