@@ -165,8 +165,6 @@ def main():
 
                 count += 1
                 elem.clear()
-                while elem.getprevious() is not None:
-                    del elem.getparent()[0]
 
             if len(points) >= 5000:
                 write_api.write(bucket=INFLUX_BUCKET, record=points)
