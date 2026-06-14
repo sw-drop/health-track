@@ -47,63 +47,64 @@ def main():
             points = []
             
             # Using iterparse to keep memory low
-            for event, elem in iterparse(xml_path, events=('end',)):
-                if elem.tag == 'Record':
-                    try:
-                        record_type = elem.get('type', '').replace('HKQuantityTypeIdentifier', '').replace('HKCategoryTypeIdentifier', '')
-                        source = elem.get('sourceName', 'Unknown')
-                        start_date = elem.get('startDate')
-                        value_str = elem.get('value')
-                        unit = elem.get('unit', '')
-
-                        if not value_str or not start_date or not record_type:
-                            elem.clear()
-                            continue
-
+            context = iterparse(xml_path, events=('start', 'end'))
+            context = iter(context)
+            event, root = next(context)
+            
+            for event, elem in context:
+                if event == 'end':
+                    if elem.tag == 'Record':
                         try:
-                            val = float(value_str)
-                        except ValueError:
-                            end_date = elem.get('endDate')
-                            if start_date and end_date:
-                                try:
-                                    from datetime import datetime
-                                    # Apple Health format: "2020-11-20 07:11:00 +0100"
-                                    fmt = "%Y-%m-%d %H:%M:%S %z"
-                                    start_dt = datetime.strptime(start_date, fmt)
-                                    end_dt = datetime.strptime(end_date, fmt)
-                                    val = (end_dt - start_dt).total_seconds() / 60.0
-                                    unit = "min"
-                                    
-                                    # Differentiate states (e.g., SleepAnalysisAsleep vs SleepAnalysisInBed)
-                                    clean_val = value_str.replace('HKCategoryValue', '').replace(record_type, '')
-                                    if clean_val:
-                                        record_type = f"{record_type}_{clean_val}"
-                                except Exception:
-                                    elem.clear()
-                                    continue
-                            else:
-                                elem.clear()
-                                continue
-                            
-                        point = Point("health_record") \
-                            .tag("type", record_type) \
-                            .tag("source", source) \
-                            .tag("unit", unit) \
-                            .field("value", val) \
-                            .time(start_date)
+                            record_type = elem.get('type', '').replace('HKQuantityTypeIdentifier', '').replace('HKCategoryTypeIdentifier', '')
+                            source = elem.get('sourceName', 'Unknown')
+                            start_date = elem.get('startDate')
+                            value_str = elem.get('value')
+                            unit = elem.get('unit', '')
 
-                        points.append(point)
-                        count += 1
-                        
-                        if len(points) >= 5000:
-                            write_api.write(bucket=INFLUX_BUCKET, org=INFLUX_ORG, record=points)
-                            print(f"Inserted {count} records...")
-                            points = []
-                    except Exception as e:
-                        print(f"Error processing record: {e}")
+                            if value_str and start_date and record_type:
+                                try:
+                                    val = float(value_str)
+                                except ValueError:
+                                    end_date = elem.get('endDate')
+                                    if start_date and end_date:
+                                        try:
+                                            from datetime import datetime
+                                            fmt = "%Y-%m-%d %H:%M:%S %z"
+                                            start_dt = datetime.strptime(start_date, fmt)
+                                            end_dt = datetime.strptime(end_date, fmt)
+                                            val = (end_dt - start_dt).total_seconds() / 60.0
+                                            unit = "min"
+                                            
+                                            clean_val = value_str.replace('HKCategoryValue', '').replace(record_type, '')
+                                            if clean_val:
+                                                record_type = f"{record_type}_{clean_val}"
+                                        except Exception:
+                                            pass
+                                
+                                if 'val' in locals():
+                                    point = Point("health_record") \
+                                        .tag("type", record_type) \
+                                        .tag("source", source) \
+                                        .tag("unit", unit) \
+                                        .field("value", val) \
+                                        .time(start_date)
+
+                                    points.append(point)
+                                    count += 1
+                                    
+                                    if len(points) >= 5000:
+                                        write_api.write(bucket=INFLUX_BUCKET, org=INFLUX_ORG, record=points)
+                                        print(f"Inserted {count} records...")
+                                        points = []
+                                        
+                                del val  # Ensure it doesn't leak to next iteration
+
+                        except Exception as e:
+                            print(f"Error processing record: {e}")
                     
-                    # FREE MEMORY
+                    # FULL MEMORY CLEAR
                     elem.clear()
+                    root.clear()
             
             # Write any remaining points
             if points:
