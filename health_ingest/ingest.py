@@ -74,20 +74,18 @@ def main():
                                             end_dt = datetime.strptime(end_date, fmt)
                                             val = (end_dt - start_dt).total_seconds() / 60.0
                                             unit = "min"
-                                            
-                                            clean_val = value_str.replace('HKCategoryValue', '').replace(record_type, '')
-                                            if clean_val:
-                                                record_type = f"{record_type}_{clean_val}"
                                         except Exception:
                                             pass
                                 
                                 if 'val' in locals():
-                                    point = Point("health_record") \
-                                        .tag("type", record_type) \
-                                        .tag("source", source) \
-                                        .tag("unit", unit) \
-                                        .field("value", val) \
-                                        .time(start_date)
+                                    point = Point(record_type).tag("device", source)
+                                    if unit:
+                                        point = point.tag("unit", unit)
+                                    
+                                    if "SleepAnalysis" in record_type:
+                                        point = Point("SleepAnalysis").tag("device", source).tag("state", value_str)
+                                        
+                                    point = point.field("value", val).time(start_date)
 
                                     points.append(point)
                                     count += 1
