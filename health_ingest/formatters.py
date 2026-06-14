@@ -61,7 +61,7 @@ def SleepAnalysisFormatter(record: dict) -> dict:
     while start_date <= end_date:
         minutes_in_bed.append({
             'measurement':"SleepAnalysisTimes-{}".format(device),
-            "time":int(start_date.timestamp()),
+            "time":start_date,
             "fields": {"value":state},
             "tags": {}
         })

@@ -92,5 +92,39 @@ def get_data(metric_type):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/sleep/segments', methods=['GET'])
+def get_sleep_segments():
+    time_range = request.args.get('range', '1M')
+    range_map = {
+        '1W': '-7d',
+        '1M': '-30d',
+        '6M': '-180d',
+        '1Y': '-1y',
+        'ALL': '-10y'
+    }
+    flux_start = range_map.get(time_range, '-30d')
+
+    query = f'''
+        from(bucket: "{INFLUX_BUCKET}")
+          |> range(start: {flux_start})
+          |> filter(fn: (r) => r["_measurement"] == "SleepAnalysis")
+          |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
+    '''
+    try:
+        tables = client.query_api().query(query, org=INFLUX_ORG)
+        segments = []
+        for table in tables:
+            for record in table.records:
+                if "start" in record.values and "stop" in record.values:
+                    segments.append({
+                        "start": record.values["start"],
+                        "stop": record.values["stop"],
+                        "state": record.values.get("state", "Unspecified")
+                    })
+        return jsonify({"data": segments})
+    except Exception as e:
+        import traceback
+        return jsonify({"error": str(e), "trace": traceback.format_exc()}), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

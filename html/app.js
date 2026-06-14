@@ -155,7 +155,19 @@ function renderCurrentTab() {
         metricsToRender = allAvailableMetrics.filter(m => getCategoryForMetric(m) === currentTab);
     }
 
-    if (metricsToRender.length === 0) {
+    if (currentTab === 'Sleep') {
+        grid.insertAdjacentHTML('beforeend', `
+            <div class="panel" style="grid-column: 1 / -1;">
+                <div class="panel-title">Chronological Sleep Phases</div>
+                <div class="chart-container" style="height: 400px;">
+                    <canvas id="sleep-segments-chart"></canvas>
+                </div>
+            </div>
+        `);
+        renderSleepSegmentsChart('sleep-segments-chart');
+    }
+
+    if (metricsToRender.length === 0 && currentTab !== 'Sleep') {
         grid.innerHTML = '<div style="color:#999; padding:2rem;">No metrics found for this category.</div>';
         return;
     }
@@ -178,6 +190,117 @@ function renderCurrentTab() {
         `;
         grid.insertAdjacentHTML('beforeend', panelHtml);
         fetchDataAndRender(metric, panelId);
+    }
+}
+
+async function renderSleepSegmentsChart(canvasId) {
+    try {
+        const res = await fetchWithPin(`${API_BASE}/sleep/segments?range=${currentTimeRange}`);
+        const result = await res.json();
+        const segments = result.data;
+
+        if (!segments || segments.length === 0) {
+            return;
+        }
+
+        const colors = {
+            'Deep': '#003f5c',
+            'Core': '#2f4b7c',
+            'REM': '#665191',
+            'Awake': '#ff7c43',
+            'Unspecified': '#a05195'
+        };
+
+        const datasets = {};
+        for (const key of Object.keys(colors)) {
+            datasets[key] = {
+                label: key,
+                data: [],
+                backgroundColor: colors[key],
+                borderSkipped: false,
+                barPercentage: 1.0,
+                categoryPercentage: 0.8
+            };
+        }
+
+        segments.forEach(seg => {
+            // X-axis: the "Sleep Session Date"
+            const dStart = new Date(seg.start * 1000);
+            if (dStart.getHours() < 12) {
+                dStart.setDate(dStart.getDate() - 1); // Attribute post-midnight sleep to previous night
+            }
+            dStart.setHours(0,0,0,0);
+            const xDate = dStart.getTime();
+
+            // Y-axis: time of day relative to a dummy date (e.g. year 2000)
+            // We want 8PM to be at the bottom, 12PM to be at the top
+            const yMin = new Date(seg.start * 1000);
+            const yMax = new Date(seg.stop * 1000);
+
+            const mapTimeToDummyDate = (dateObj) => {
+                const dummy = new Date(2000, 0, 1, dateObj.getHours(), dateObj.getMinutes(), dateObj.getSeconds());
+                if (dateObj.getHours() < 12) {
+                    dummy.setDate(2); // Next morning belongs to the next day sequentially
+                }
+                return dummy.getTime();
+            };
+
+            const state = datasets[seg.state] ? seg.state : 'Unspecified';
+            datasets[state].data.push({
+                x: xDate,
+                y: [mapTimeToDummyDate(yMin), mapTimeToDummyDate(yMax)]
+            });
+        });
+
+        // Filter out empty datasets
+        const activeDatasets = Object.values(datasets).filter(ds => ds.data.length > 0);
+
+        chartInstances[canvasId] = new Chart(document.getElementById(canvasId), {
+            type: 'bar',
+            data: { datasets: activeDatasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true, position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const y = context.raw.y;
+                                const min = new Date(y[0]).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                                const max = new Date(y[1]).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                                return `${context.dataset.label}: ${min} - ${max}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: { unit: 'day', tooltipFormat: 'PP' },
+                        offset: true,
+                        grid: { display: false },
+                        ticks: { color: '#999' },
+                        stacked: false // We don't want values to stack on top of each other! Floating bars handle their own Y positioning!
+                    },
+                    y: {
+                        type: 'time',
+                        time: {
+                            unit: 'hour',
+                            displayFormats: { hour: 'h a' },
+                            tooltipFormat: 'h:mm a'
+                        },
+                        grid: { color: '#f0f0f0' },
+                        ticks: { color: '#999' },
+                        min: new Date(2000, 0, 1, 20, 0, 0).getTime(), // 8 PM
+                        max: new Date(2000, 0, 2, 12, 0, 0).getTime(), // 12 PM
+                        reverse: false // 8 PM at bottom, 12 PM at top
+                    }
+                }
+            }
+        });
+    } catch (e) {
+        console.error('Failed to load sleep segments', e);
     }
 }
 
