@@ -4,7 +4,7 @@ import tempfile
 import time
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
-from lxml import etree
+import xml.etree.ElementTree as etree
 from datetime import datetime
 import glob
 import gpxpy
@@ -145,7 +145,7 @@ def main():
         sources = set()
 
         print("Parsing export.xml via iterparse...")
-        context = etree.iterparse(export_xml_path, events=('end',), recover=True)
+        context = etree.iterparse(export_xml_path, events=('end',))
         
         for event, elem in context:
             if elem.tag in ['Record', 'Workout']:
