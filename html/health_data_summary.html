@@ -26,7 +26,7 @@
         }
         
         .container {
-            max-width: 1300px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         
@@ -251,6 +251,12 @@
             gap: 0.5rem;
             z-index: 1000;
         }
+        
+        .desc-cell {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
@@ -284,17 +290,18 @@
         
         <div class="section">
             <h2>Record Types & Densities</h2>
-            <input type="text" id="record-search" class="search-box" placeholder="Search record type, unit, source, action..." onkeyup="filterTable('record-table', 'record-search')">
+            <input type="text" id="record-search" class="search-box" placeholder="Search record type, unit, source, action, explanation..." onkeyup="filterTable('record-table', 'record-search')">
             <table id="record-table">
                 <thead>
                     <tr>
-                        <th style="width: 20%;">Metric Type</th>
-                        <th style="width: 10%;">Record Count</th>
-                        <th style="width: 20%;">Status</th>
+                        <th style="width: 15%;">Metric Type</th>
+                        <th style="width: 8%;">Record Count</th>
+                        <th style="width: 15%;">Status</th>
                         <th style="width: 15%;">Action Note</th>
-                        <th style="width: 15%;">Sample Value / Unit</th>
-                        <th style="width: 10%;">Date Range</th>
-                        <th style="width: 10%;">Data Sources</th>
+                        <th style="width: 20%;">Explanation</th>
+                        <th style="width: 10%;">Sample Value / Unit</th>
+                        <th style="width: 8%;">Date Range</th>
+                        <th style="width: 9%;">Data Sources</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -310,9 +317,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="HeartRate" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Heart rate in beats per minute, sampled periodically by Apple Watch.</td>
                         <td><strong>53</strong> <span style="color:#888; font-size:0.85rem;">count/min</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -326,9 +334,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="ActiveEnergyBurned" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Energy consumed above basal metabolic rate through movement and exercise.</td>
                         <td><strong>2.195</strong> <span style="color:#888; font-size:0.85rem;">kcal</span></td>
                         <td class="date-cell">2023-05-07 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s iPhone</span></td>
                     </tr>
         
                     <tr>
@@ -342,9 +351,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="PhysicalEffort" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Estimated metabolic rate of work during a task (measured in METs or kcal/hr·kg).</td>
                         <td><strong>1.2</strong> <span style="color:#888; font-size:0.85rem;">kcal/hr·kg</span></td>
                         <td class="date-cell">2023-09-22 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -358,9 +368,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="BasalEnergyBurned" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Resting energy expenditure (calories burned just staying alive).</td>
                         <td><strong>6.722</strong> <span style="color:#888; font-size:0.85rem;">kcal</span></td>
                         <td class="date-cell">2023-05-07 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s iPhone</span></td>
                     </tr>
         
                     <tr>
@@ -374,9 +385,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="DistanceWalkingRunning" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Estimated distance walked or run, calculated from steps and stride length.</td>
                         <td><strong>0.0148355</strong> <span style="color:#888; font-size:0.85rem;">mi</span></td>
                         <td class="date-cell">2023-05-08 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s iPhone</span></td>
                     </tr>
         
                     <tr>
@@ -390,9 +402,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="StepCount" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Step count counted by iPhone and Apple Watch accelerometers.</td>
                         <td><strong>30</strong> <span style="color:#888; font-size:0.85rem;">count</span></td>
                         <td class="date-cell">2023-05-08 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s iPhone</span></td>
                     </tr>
         
                     <tr>
@@ -406,9 +419,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="RespiratoryRate" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Breathing rate (breaths per minute) measured during sleep by Apple Watch.</td>
                         <td><strong>9.5</strong> <span style="color:#888; font-size:0.85rem;">count/min</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-14</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -422,9 +436,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="EnvironmentalAudioExposure" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">External sound levels (dB) sampled periodically by the Apple Watch mic.</td>
                         <td><strong>39.9622</strong> <span style="color:#888; font-size:0.85rem;">dBASPL</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -438,9 +453,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="AppleStandTime" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Minutes stood per hour, logged by the Apple Watch.</td>
                         <td><strong>1</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-14</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -454,9 +470,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="SleepAnalysis" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Sleep states (In Bed, Awake, Core, Deep, REM) and total durations.</td>
                         <td><strong>HKCategoryValueSleepAnalysisInBed</strong> <span style="color:#888; font-size:0.85rem;">N/A</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-14</td>
-                        <td><span class="source-tag">Sleep++</span><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Sleep++</span></td>
                     </tr>
         
                     <tr>
@@ -470,6 +487,7 @@
                         <td>
                             <input type="text" class="action-input" data-metric="WalkingStepLength" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Average distance covered per step when walking on flat ground.</td>
                         <td><strong>83</strong> <span style="color:#888; font-size:0.85rem;">cm</span></td>
                         <td class="date-cell">2023-05-09 <span style="color:#ccc;">to</span> 2026-06-14</td>
                         <td><span class="source-tag">Persu17</span></td>
@@ -486,6 +504,7 @@
                         <td>
                             <input type="text" class="action-input" data-metric="WalkingSpeed" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Average speed when walking on flat ground, captured by iPhone sensors.</td>
                         <td><strong>5.4</strong> <span style="color:#888; font-size:0.85rem;">km/hr</span></td>
                         <td class="date-cell">2023-05-09 <span style="color:#ccc;">to</span> 2026-06-14</td>
                         <td><span class="source-tag">Persu17</span></td>
@@ -502,6 +521,7 @@
                         <td>
                             <input type="text" class="action-input" data-metric="WalkingDoubleSupportPercentage" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Percentage of walking time spent with both feet touching the ground.</td>
                         <td><strong>0.291</strong> <span style="color:#888; font-size:0.85rem;">%</span></td>
                         <td class="date-cell">2023-05-09 <span style="color:#ccc;">to</span> 2026-06-14</td>
                         <td><span class="source-tag">Persu17</span></td>
@@ -518,9 +538,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="AppleStandHour" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Hourly stand state (Stood vs. Idle) representing if you stood for at least 1 min in the hour.</td>
                         <td><strong>HKCategoryValueAppleStandHourIdle</strong> <span style="color:#888; font-size:0.85rem;">N/A</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -534,6 +555,7 @@
                         <td>
                             <input type="text" class="action-input" data-metric="WalkingAsymmetryPercentage" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Difference in step timing between left and right feet (lower is more symmetric).</td>
                         <td><strong>0</strong> <span style="color:#888; font-size:0.85rem;">%</span></td>
                         <td class="date-cell">2023-05-09 <span style="color:#ccc;">to</span> 2026-06-14</td>
                         <td><span class="source-tag">Persu17</span></td>
@@ -550,9 +572,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="AppleExerciseTime" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Time spent in active exercise (brisk walking equivalent or faster) in minutes.</td>
                         <td><strong>1</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
                         <td class="date-cell">2023-05-17 <span style="color:#ccc;">to</span> 2026-06-14</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -566,9 +589,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="OxygenSaturation" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Blood oxygen level (SpO2) measuring oxygen transport efficiency, ideally 95-100%.</td>
                         <td><strong>0.98</strong> <span style="color:#888; font-size:0.85rem;">%</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Blood Oxygen</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Blood Oxygen</span><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -582,9 +606,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="HeartRateVariabilitySDNN" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">SDNN in ms: variation in time between heartbeats. Higher values indicate better recovery and low stress.</td>
                         <td><strong>31.111</strong> <span style="color:#888; font-size:0.85rem;">ms</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -598,9 +623,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="TimeInDaylight" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Estimated minutes spent outdoors under daylight (ambient light sensor).</td>
                         <td><strong>5</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
                         <td class="date-cell">2023-09-23 <span style="color:#ccc;">to</span> 2026-06-14</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -614,9 +640,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="HeadphoneAudioExposure" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Sound levels (dB) of audio output played through headphones or earbuds.</td>
                         <td><strong>76.3761</strong> <span style="color:#888; font-size:0.85rem;">dBASPL</span></td>
                         <td class="date-cell">2023-05-12 <span style="color:#ccc;">to</span> 2026-06-12</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span></td>
+                        <td><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -630,9 +657,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="FlightsClimbed" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Approximate flights of stairs climbed (1 flight ≈ 10 feet / 3 meters of elevation gain).</td>
                         <td><strong>1</strong> <span style="color:#888; font-size:0.85rem;">count</span></td>
                         <td class="date-cell">2023-05-11 <span style="color:#ccc;">to</span> 2026-06-14</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -646,9 +674,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="EnvironmentalSoundReduction" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">External noise attenuation (dB) achieved by noise-canceling headphones.</td>
                         <td><strong>27.4717</strong> <span style="color:#888; font-size:0.85rem;">dBASPL</span></td>
                         <td class="date-cell">2023-07-19 <span style="color:#ccc;">to</span> 2026-06-12</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -662,9 +691,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="StairDescentSpeed" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Downward climbing speed (meters per second) on stairs.</td>
                         <td><strong>0.322823</strong> <span style="color:#888; font-size:0.85rem;">m/s</span></td>
                         <td class="date-cell">2023-05-17 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -678,9 +708,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="StairAscentSpeed" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Upward climbing speed (meters per second) on stairs.</td>
                         <td><strong>0.237744</strong> <span style="color:#888; font-size:0.85rem;">m/s</span></td>
                         <td class="date-cell">2023-05-17 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -694,9 +725,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="RestingHeartRate" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Lowest stable heart rate (bpm) during rest or sleep.</td>
                         <td><strong>58</strong> <span style="color:#888; font-size:0.85rem;">count/min</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-14</td>
-                        <td><span class="source-tag">Athlytic</span><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Athlytic</span><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -710,9 +742,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="Height" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">User body height in feet/inches or cm.</td>
                         <td><strong>6.08333</strong> <span style="color:#888; font-size:0.85rem;">ft</span></td>
                         <td class="date-cell">2021-03-24 <span style="color:#ccc;">to</span> 2026-06-09</td>
-                        <td><span class="source-tag">Health</span><span class="source-tag">Persu17</span><span class="source-tag">eufy Life</span></td>
+                        <td><span class="source-tag">Health</span><span class="source-tag">eufy Life</span><span class="source-tag">Persu17</span></td>
                     </tr>
         
                     <tr>
@@ -726,6 +759,7 @@
                         <td>
                             <input type="text" class="action-input" data-metric="BodyMass" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">User body weight (synced from eufy scales or entered manually).</td>
                         <td><strong>103.8</strong> <span style="color:#888; font-size:0.85rem;">kg</span></td>
                         <td class="date-cell">2021-03-24 <span style="color:#ccc;">to</span> 2026-06-09</td>
                         <td><span class="source-tag">eufy Life</span></td>
@@ -742,6 +776,7 @@
                         <td>
                             <input type="text" class="action-input" data-metric="BodyMassIndex" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">BMI: ratio of weight to height squared, indicating weight category.</td>
                         <td><strong>30.3287</strong> <span style="color:#888; font-size:0.85rem;">count</span></td>
                         <td class="date-cell">2021-03-24 <span style="color:#ccc;">to</span> 2026-06-09</td>
                         <td><span class="source-tag">eufy Life</span></td>
@@ -758,9 +793,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="WalkingHeartRateAverage" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Average heart rate during walking sessions.</td>
                         <td><strong>74</strong> <span style="color:#888; font-size:0.85rem;">count/min</span></td>
                         <td class="date-cell">2023-05-17 <span style="color:#ccc;">to</span> 2026-06-13</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -774,6 +810,7 @@
                         <td>
                             <input type="text" class="action-input" data-metric="BodyFatPercentage" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Percentage of body weight that is fat (synced from eufy scale).</td>
                         <td><strong>0.333445</strong> <span style="color:#888; font-size:0.85rem;">%</span></td>
                         <td class="date-cell">2021-03-24 <span style="color:#ccc;">to</span> 2026-06-09</td>
                         <td><span class="source-tag">eufy Life</span></td>
@@ -790,6 +827,7 @@
                         <td>
                             <input type="text" class="action-input" data-metric="LeanBodyMass" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Total weight of body muscles, bones, and organs (excluding fat).</td>
                         <td><strong>69.2</strong> <span style="color:#888; font-size:0.85rem;">kg</span></td>
                         <td class="date-cell">2021-03-24 <span style="color:#ccc;">to</span> 2026-06-09</td>
                         <td><span class="source-tag">eufy Life</span></td>
@@ -806,9 +844,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="AppleSleepingBreathingDisturbances" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Breathing anomalies detected during sleep, indicating potential sleep apnea risk.</td>
                         <td><strong>6.44819</strong> <span style="color:#888; font-size:0.85rem;">count</span></td>
                         <td class="date-cell">2025-01-11 <span style="color:#ccc;">to</span> 2026-06-14</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -822,6 +861,7 @@
                         <td>
                             <input type="text" class="action-input" data-metric="DistanceCycling" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Distance traveled while cycling, recorded by Apple Watch GPS or sensors.</td>
                         <td><strong>0.0491419</strong> <span style="color:#888; font-size:0.85rem;">mi</span></td>
                         <td class="date-cell">2023-09-05 <span style="color:#ccc;">to</span> 2024-11-14</td>
                         <td><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -838,9 +878,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="VO2Max" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Maximum rate of oxygen consumption (aerobic fitness index) in mL/min/kg.</td>
                         <td><strong>29.21</strong> <span style="color:#888; font-size:0.85rem;">mL/min·kg</span></td>
                         <td class="date-cell">2023-06-01 <span style="color:#ccc;">to</span> 2026-06-09</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -854,6 +895,7 @@
                         <td>
                             <input type="text" class="action-input" data-metric="AppleWalkingSteadiness" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Fall risk assessment based on gait metrics (OK, Low, Very Low).</td>
                         <td><strong>0.944469</strong> <span style="color:#888; font-size:0.85rem;">%</span></td>
                         <td class="date-cell">2023-05-08 <span style="color:#ccc;">to</span> 2026-06-12</td>
                         <td><span class="source-tag">Persu17</span></td>
@@ -870,6 +912,7 @@
                         <td>
                             <input type="text" class="action-input" data-metric="SixMinuteWalkTestDistance" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Estimated maximum distance walkable in six minutes (fitness indicator).</td>
                         <td><strong>500</strong> <span style="color:#888; font-size:0.85rem;">m</span></td>
                         <td class="date-cell">2023-05-30 <span style="color:#ccc;">to</span> 2026-06-14</td>
                         <td><span class="source-tag">Persu17</span></td>
@@ -886,9 +929,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="AudioExposureEvent" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Events logged when audio exposure exceeds safe thresholds.</td>
                         <td><strong>HKCategoryValueEnvironmentalAudioExposureEventMomentaryLimit</strong> <span style="color:#888; font-size:0.85rem;">N/A</span></td>
                         <td class="date-cell">2023-05-17 <span style="color:#ccc;">to</span> 2025-12-27</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -902,9 +946,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="HeartRateRecoveryOneMinute" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Drop in heart rate (bpm) one minute after ending high-intensity exercise.</td>
                         <td><strong>27.056</strong> <span style="color:#888; font-size:0.85rem;">count/min</span></td>
                         <td class="date-cell">2023-09-09 <span style="color:#ccc;">to</span> 2026-04-21</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -918,6 +963,7 @@
                         <td>
                             <input type="text" class="action-input" data-metric="NumberOfAlcoholicBeverages" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Number of drinks recorded in the Health app.</td>
                         <td><strong>5</strong> <span style="color:#888; font-size:0.85rem;">count</span></td>
                         <td class="date-cell">2026-06-12 <span style="color:#ccc;">to</span> 2026-06-13</td>
                         <td><span class="source-tag">Health</span></td>
@@ -934,6 +980,7 @@
                         <td>
                             <input type="text" class="action-input" data-metric="SleepDurationGoal" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Target sleep duration (hours) set by the user.</td>
                         <td><strong>8</strong> <span style="color:#888; font-size:0.85rem;">hr</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2023-05-16</td>
                         <td><span class="source-tag">Sleep</span></td>
@@ -950,6 +997,7 @@
                         <td>
                             <input type="text" class="action-input" data-metric="HighHeartRateEvent" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Logs triggered when heart rate spikes while inactive.</td>
                         <td><strong>HKCategoryValueNotApplicable</strong> <span style="color:#888; font-size:0.85rem;">N/A</span></td>
                         <td class="date-cell">2025-08-05 <span style="color:#ccc;">to</span> 2025-08-05</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span></td>
@@ -961,17 +1009,18 @@
         
         <div class="section">
             <h2>Workout Types</h2>
-            <input type="text" id="workout-search" class="search-box" placeholder="Search workout type, action..." onkeyup="filterTable('workout-table', 'workout-search')">
+            <input type="text" id="workout-search" class="search-box" placeholder="Search workout type, action, explanation..." onkeyup="filterTable('workout-table', 'workout-search')">
             <table id="workout-table">
                 <thead>
                     <tr>
-                        <th style="width: 20%;">Workout Type</th>
-                        <th style="width: 10%;">Record Count</th>
-                        <th style="width: 20%;">Status</th>
+                        <th style="width: 15%;">Workout Type</th>
+                        <th style="width: 8%;">Record Count</th>
+                        <th style="width: 15%;">Status</th>
                         <th style="width: 15%;">Action Note</th>
-                        <th style="width: 15%;">Sample Duration</th>
-                        <th style="width: 10%;">Date Range</th>
-                        <th style="width: 10%;">Data Sources</th>
+                        <th style="width: 20%;">Explanation</th>
+                        <th style="width: 10%;">Sample Duration</th>
+                        <th style="width: 8%;">Date Range</th>
+                        <th style="width: 9%;">Data Sources</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -987,9 +1036,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="Walking" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Outdoor or indoor walking workouts.</td>
                         <td><strong>11.27210195263227</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
                         <td class="date-cell">2023-05-29 <span style="color:#ccc;">to</span> 2026-06-02</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -1003,9 +1053,10 @@
                         <td>
                             <input type="text" class="action-input" data-metric="Other" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Workouts categorized as "Other" (e.g. strength, yoga, functional training).</td>
                         <td><strong>23.27965446710586</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
                         <td class="date-cell">2023-10-27 <span style="color:#ccc;">to</span> 2025-11-29</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
                     </tr>
         
                     <tr>
@@ -1019,6 +1070,7 @@
                         <td>
                             <input type="text" class="action-input" data-metric="Cycling" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
                         </td>
+                        <td class="desc-cell">Cycling sessions (indoor or outdoor).</td>
                         <td><strong>58.43248369892438</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
                         <td class="date-cell">2023-09-05 <span style="color:#ccc;">to</span> 2024-11-14</td>
                         <td><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -1033,65 +1085,77 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Element Tag</th>
-                        <th>Occurrence Count</th>
+                        <th style="width: 25%;">Element Tag</th>
+                        <th style="width: 15%;">Occurrence Count</th>
+                        <th style="width: 60%;">Explanation</th>
                     </tr>
                 </thead>
                 <tbody>
     
                     <tr>
-                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;ExportDate&gt;</td>
-                        <td><span class="badge badge-count">1</span></td>
-                    </tr>
-        
-                    <tr>
-                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;Me&gt;</td>
-                        <td><span class="badge badge-count">1</span></td>
-                    </tr>
-        
-                    <tr>
                         <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;MetadataEntry&gt;</td>
                         <td><span class="badge badge-count">697,012</span></td>
-                    </tr>
-        
-                    <tr>
-                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;WorkoutEvent&gt;</td>
-                        <td><span class="badge badge-count">620</span></td>
-                    </tr>
-        
-                    <tr>
-                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;WorkoutStatistics&gt;</td>
-                        <td><span class="badge badge-count">307</span></td>
-                    </tr>
-        
-                    <tr>
-                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;FileReference&gt;</td>
-                        <td><span class="badge badge-count">63</span></td>
-                    </tr>
-        
-                    <tr>
-                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;WorkoutRoute&gt;</td>
-                        <td><span class="badge badge-count">63</span></td>
-                    </tr>
-        
-                    <tr>
-                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;ActivitySummary&gt;</td>
-                        <td><span class="badge badge-count">889</span></td>
+                        <td class="desc-cell">Key-value metadata fields attached to individual records (e.g., timezone, device model).</td>
                     </tr>
         
                     <tr>
                         <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;InstantaneousBeatsPerMinute&gt;</td>
                         <td><span class="badge badge-count">399,573</span></td>
+                        <td class="desc-cell">High-frequency beat-to-beat heart rate samples.</td>
                     </tr>
         
                     <tr>
                         <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;HeartRateVariabilityMetadataList&gt;</td>
                         <td><span class="badge badge-count">7,471</span></td>
+                        <td class="desc-cell">Sequence of microsecond intervals between heartbeats used to calculate HRV.</td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;ActivitySummary&gt;</td>
+                        <td><span class="badge badge-count">889</span></td>
+                        <td class="desc-cell">Daily summaries of Activity rings targets and progress (Move, Exercise, Stand).</td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;WorkoutEvent&gt;</td>
+                        <td><span class="badge badge-count">620</span></td>
+                        <td class="desc-cell">Milestones within workouts, such as pauses, resumes, or lap markers.</td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;WorkoutStatistics&gt;</td>
+                        <td><span class="badge badge-count">307</span></td>
+                        <td class="desc-cell">Aggregated metrics for a single workout session (e.g., steps, average HR, distance).</td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;FileReference&gt;</td>
+                        <td><span class="badge badge-count">63</span></td>
+                        <td class="desc-cell">Pointers to external media/binary files inside the ZIP (e.g., GPX maps, raw HRV beat arrays).</td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;WorkoutRoute&gt;</td>
+                        <td><span class="badge badge-count">63</span></td>
+                        <td class="desc-cell">Association tag indicating a GPS route mapping exists for a workout.</td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;ExportDate&gt;</td>
+                        <td><span class="badge badge-count">1</span></td>
+                        <td class="desc-cell">The timestamp when the health data package was exported from the iPhone.</td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;Me&gt;</td>
+                        <td><span class="badge badge-count">1</span></td>
+                        <td class="desc-cell">Demographic profile of the user (date of birth, biological sex, blood type).</td>
                     </tr>
         
                     <tr>
                         <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;HealthData&gt;</td>
                         <td><span class="badge badge-count">1</span></td>
+                        <td class="desc-cell">The root XML document container enclosing the entire Apple Health data set.</td>
                     </tr>
         
                 </tbody>
@@ -1209,7 +1273,6 @@
                 match = false;
                 for (j = 0; j < td.length; j++) {
                     if (td[j]) {
-                        // Include text inputs values in the filter logic
                         const inputEl = td[j].querySelector('.action-input');
                         txtValue = inputEl ? inputEl.value : (td[j].textContent || td[j].innerText);
                         
