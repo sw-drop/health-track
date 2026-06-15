@@ -134,6 +134,7 @@
             width: 100%;
             border-collapse: collapse;
             text-align: left;
+            table-layout: fixed;
         }
         
         th {
@@ -202,6 +203,12 @@
         .sample-cell {
             word-break: break-all;
             hyphens: auto;
+        }
+
+        .metric-cell {
+            word-break: break-all;
+            font-weight: 600;
+            color: #1a252c;
         }
 
         .status-checkbox {
@@ -312,7 +319,7 @@
                 <tbody>
     
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">HeartRate</td>
+                        <td class="metric-cell">HeartRate</td>
                         <td><span class="badge badge-count">236,163</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HeartRate" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -329,7 +336,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">ActiveEnergyBurned</td>
+                        <td class="metric-cell">ActiveEnergyBurned</td>
                         <td><span class="badge badge-count">166,234</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="ActiveEnergyBurned" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -342,11 +349,11 @@
                         <td class="desc-cell">Energy consumed above basal metabolic rate through movement and exercise.</td>
                         <td class="sample-cell"><strong>2.195</strong> <span style="color:#888; font-size:0.85rem;">kcal</span></td>
                         <td class="date-cell">2023-05-07 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s iPhone</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Gary’s Apple Watch</span></td>
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">PhysicalEffort</td>
+                        <td class="metric-cell">PhysicalEffort</td>
                         <td><span class="badge badge-count">130,332</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="PhysicalEffort" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -363,7 +370,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">BasalEnergyBurned</td>
+                        <td class="metric-cell">BasalEnergyBurned</td>
                         <td><span class="badge badge-count">123,457</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="BasalEnergyBurned" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -376,11 +383,11 @@
                         <td class="desc-cell">Resting energy expenditure (calories burned just staying alive).</td>
                         <td class="sample-cell"><strong>6.722</strong> <span style="color:#888; font-size:0.85rem;">kcal</span></td>
                         <td class="date-cell">2023-05-07 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s iPhone</span></td>
+                        <td><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">DistanceWalkingRunning</td>
+                        <td class="metric-cell">DistanceWalkingRunning</td>
                         <td><span class="badge badge-count">79,225</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="DistanceWalkingRunning" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -393,11 +400,11 @@
                         <td class="desc-cell">Estimated distance walked or run, calculated from steps and stride length.</td>
                         <td class="sample-cell"><strong>0.0148355</strong> <span style="color:#888; font-size:0.85rem;">mi</span></td>
                         <td class="date-cell">2023-05-08 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s iPhone</span></td>
+                        <td><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">StepCount</td>
+                        <td class="metric-cell">StepCount</td>
                         <td><span class="badge badge-count">55,981</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="StepCount" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -410,11 +417,11 @@
                         <td class="desc-cell">Step count counted by iPhone and Apple Watch accelerometers.</td>
                         <td class="sample-cell"><strong>30</strong> <span style="color:#888; font-size:0.85rem;">count</span></td>
                         <td class="date-cell">2023-05-08 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s iPhone</span></td>
+                        <td><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">RespiratoryRate</td>
+                        <td class="metric-cell">RespiratoryRate</td>
                         <td><span class="badge badge-count">41,694</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="RespiratoryRate" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -431,7 +438,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">EnvironmentalAudioExposure</td>
+                        <td class="metric-cell">EnvironmentalAudioExposure</td>
                         <td><span class="badge badge-count">28,942</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="EnvironmentalAudioExposure" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -448,7 +455,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">AppleStandTime</td>
+                        <td class="metric-cell">AppleStandTime</td>
                         <td><span class="badge badge-count">28,455</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleStandTime" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -465,7 +472,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">SleepAnalysis</td>
+                        <td class="metric-cell">SleepAnalysis</td>
                         <td><span class="badge badge-count">28,067</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="SleepAnalysis" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -478,11 +485,11 @@
                         <td class="desc-cell">Sleep states (In Bed, Awake, Core, Deep, REM) and total durations.</td>
                         <td class="sample-cell"><strong>HKCategoryValueSleepAnalysisInBed</strong> <span style="color:#888; font-size:0.85rem;">N/A</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-14</td>
-                        <td><span class="source-tag">Sleep++</span><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Sleep++</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">WalkingStepLength</td>
+                        <td class="metric-cell">WalkingStepLength</td>
                         <td><span class="badge badge-count">25,921</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingStepLength" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -499,7 +506,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">WalkingSpeed</td>
+                        <td class="metric-cell">WalkingSpeed</td>
                         <td><span class="badge badge-count">25,919</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingSpeed" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -516,7 +523,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">WalkingDoubleSupportPercentage</td>
+                        <td class="metric-cell">WalkingDoubleSupportPercentage</td>
                         <td><span class="badge badge-count">23,212</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingDoubleSupportPercentage" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -533,7 +540,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">AppleStandHour</td>
+                        <td class="metric-cell">AppleStandHour</td>
                         <td><span class="badge badge-count">14,675</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleStandHour" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -550,7 +557,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">WalkingAsymmetryPercentage</td>
+                        <td class="metric-cell">WalkingAsymmetryPercentage</td>
                         <td><span class="badge badge-count">13,550</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingAsymmetryPercentage" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -567,7 +574,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">AppleExerciseTime</td>
+                        <td class="metric-cell">AppleExerciseTime</td>
                         <td><span class="badge badge-count">13,421</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleExerciseTime" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -584,7 +591,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">OxygenSaturation</td>
+                        <td class="metric-cell">OxygenSaturation</td>
                         <td><span class="badge badge-count">10,868</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="OxygenSaturation" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -597,11 +604,11 @@
                         <td class="desc-cell">Blood oxygen level (SpO2) measuring oxygen transport efficiency, ideally 95-100%.</td>
                         <td class="sample-cell"><strong>0.98</strong> <span style="color:#888; font-size:0.85rem;">%</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Blood Oxygen</span><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
+                        <td><span class="source-tag">Blood Oxygen</span><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">HeartRateVariabilitySDNN</td>
+                        <td class="metric-cell">HeartRateVariabilitySDNN</td>
                         <td><span class="badge badge-count">7,471</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HeartRateVariabilitySDNN" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -618,7 +625,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">TimeInDaylight</td>
+                        <td class="metric-cell">TimeInDaylight</td>
                         <td><span class="badge badge-count">5,633</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="TimeInDaylight" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -635,7 +642,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">HeadphoneAudioExposure</td>
+                        <td class="metric-cell">HeadphoneAudioExposure</td>
                         <td><span class="badge badge-count">5,000</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HeadphoneAudioExposure" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -652,7 +659,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">FlightsClimbed</td>
+                        <td class="metric-cell">FlightsClimbed</td>
                         <td><span class="badge badge-count">3,133</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="FlightsClimbed" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -669,7 +676,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">EnvironmentalSoundReduction</td>
+                        <td class="metric-cell">EnvironmentalSoundReduction</td>
                         <td><span class="badge badge-count">2,008</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="EnvironmentalSoundReduction" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -686,7 +693,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">StairDescentSpeed</td>
+                        <td class="metric-cell">StairDescentSpeed</td>
                         <td><span class="badge badge-count">1,523</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="StairDescentSpeed" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -703,7 +710,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">StairAscentSpeed</td>
+                        <td class="metric-cell">StairAscentSpeed</td>
                         <td><span class="badge badge-count">1,108</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="StairAscentSpeed" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -720,7 +727,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">RestingHeartRate</td>
+                        <td class="metric-cell">RestingHeartRate</td>
                         <td><span class="badge badge-count">834</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="RestingHeartRate" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -737,7 +744,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">Height</td>
+                        <td class="metric-cell">Height</td>
                         <td><span class="badge badge-count">647</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="Height" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -750,11 +757,11 @@
                         <td class="desc-cell">User body height in feet/inches or cm.</td>
                         <td class="sample-cell"><strong>6.08333</strong> <span style="color:#888; font-size:0.85rem;">ft</span></td>
                         <td class="date-cell">2021-03-24 <span style="color:#ccc;">to</span> 2026-06-09</td>
-                        <td><span class="source-tag">Health</span><span class="source-tag">Persu17</span><span class="source-tag">eufy Life</span></td>
+                        <td><span class="source-tag">eufy Life</span><span class="source-tag">Persu17</span><span class="source-tag">Health</span></td>
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">BodyMass</td>
+                        <td class="metric-cell">BodyMass</td>
                         <td><span class="badge badge-count">644</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="BodyMass" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -771,7 +778,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">BodyMassIndex</td>
+                        <td class="metric-cell">BodyMassIndex</td>
                         <td><span class="badge badge-count">642</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="BodyMassIndex" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -788,7 +795,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">WalkingHeartRateAverage</td>
+                        <td class="metric-cell">WalkingHeartRateAverage</td>
                         <td><span class="badge badge-count">629</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingHeartRateAverage" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -805,7 +812,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">BodyFatPercentage</td>
+                        <td class="metric-cell">BodyFatPercentage</td>
                         <td><span class="badge badge-count">621</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="BodyFatPercentage" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -822,7 +829,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">LeanBodyMass</td>
+                        <td class="metric-cell">LeanBodyMass</td>
                         <td><span class="badge badge-count">621</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="LeanBodyMass" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -839,7 +846,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">AppleSleepingBreathingDisturbances</td>
+                        <td class="metric-cell">AppleSleepingBreathingDisturbances</td>
                         <td><span class="badge badge-count">531</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleSleepingBreathingDisturbances" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -856,7 +863,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">DistanceCycling</td>
+                        <td class="metric-cell">DistanceCycling</td>
                         <td><span class="badge badge-count">226</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="DistanceCycling" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -873,7 +880,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">VO2Max</td>
+                        <td class="metric-cell">VO2Max</td>
                         <td><span class="badge badge-count">102</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="VO2Max" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -890,7 +897,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">AppleWalkingSteadiness</td>
+                        <td class="metric-cell">AppleWalkingSteadiness</td>
                         <td><span class="badge badge-count">85</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleWalkingSteadiness" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -907,7 +914,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">SixMinuteWalkTestDistance</td>
+                        <td class="metric-cell">SixMinuteWalkTestDistance</td>
                         <td><span class="badge badge-count">60</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="SixMinuteWalkTestDistance" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -924,7 +931,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">AudioExposureEvent</td>
+                        <td class="metric-cell">AudioExposureEvent</td>
                         <td><span class="badge badge-count">55</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AudioExposureEvent" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -941,7 +948,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">HeartRateRecoveryOneMinute</td>
+                        <td class="metric-cell">HeartRateRecoveryOneMinute</td>
                         <td><span class="badge badge-count">21</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HeartRateRecoveryOneMinute" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -958,7 +965,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">NumberOfAlcoholicBeverages</td>
+                        <td class="metric-cell">NumberOfAlcoholicBeverages</td>
                         <td><span class="badge badge-count">3</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="NumberOfAlcoholicBeverages" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -975,7 +982,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">SleepDurationGoal</td>
+                        <td class="metric-cell">SleepDurationGoal</td>
                         <td><span class="badge badge-one">1 Record</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="SleepDurationGoal" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -992,7 +999,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">HighHeartRateEvent</td>
+                        <td class="metric-cell">HighHeartRateEvent</td>
                         <td><span class="badge badge-one">1 Record</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HighHeartRateEvent" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -1031,7 +1038,7 @@
                 <tbody>
     
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">Walking</td>
+                        <td class="metric-cell">Walking</td>
                         <td><span class="badge badge-count">67</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="Walking" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -1048,7 +1055,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">Other</td>
+                        <td class="metric-cell">Other</td>
                         <td><span class="badge badge-count">7</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="Other" data-status="active" onclick="handleStatusClick(this)"> Active</label>
@@ -1065,7 +1072,7 @@
                     </tr>
         
                     <tr>
-                        <td style="font-weight: 600; color: #1a252c;">Cycling</td>
+                        <td class="metric-cell">Cycling</td>
                         <td><span class="badge badge-count">5</span></td>
                         <td>
                             <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="Cycling" data-status="active" onclick="handleStatusClick(this)"> Active</label>
