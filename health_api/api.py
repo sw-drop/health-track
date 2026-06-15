@@ -35,7 +35,7 @@ def static_files(path):
 def get_metrics():
     query = f'''
         import "influxdata/influxdb/schema"
-        schema.measurementTagValues(bucket: "{INFLUX_BUCKET}", measurement: "health_record", tag: "type")
+        schema.measurements(bucket: "{INFLUX_BUCKET}")
     '''
     try:
         tables = client.query_api().query(query, org=INFLUX_ORG)
@@ -70,8 +70,7 @@ def get_data(metric_type):
     query = f'''
         from(bucket: "{INFLUX_BUCKET}")
           |> range(start: {flux_start})
-          |> filter(fn: (r) => r["_measurement"] == "health_record")
-          |> filter(fn: (r) => r["type"] == "{metric_type}")
+          |> filter(fn: (r) => r["_measurement"] == "{metric_type}")
           |> filter(fn: (r) => r["_field"] == "value")
           |> aggregateWindow(every: 1d, fn: {agg_fn}, createEmpty: false)
           |> yield(name: "{agg_fn}")
