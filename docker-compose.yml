@@ -5,7 +5,7 @@ services:
     build: ./health_api
     container_name: health_api
     volumes:
-      - ./html:/html:ro
+      - ./html:/html:rw
     environment:
       - INFLUX_URL=http://influxdb:8086
       - INFLUX_TOKEN=my-super-secret-auth-token

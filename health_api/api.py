@@ -31,6 +31,30 @@ def index():
 def static_files(path):
     return send_from_directory('/html', path)
 
+@app.route('/api/actions', methods=['GET'])
+def get_actions():
+    import json
+    filepath = '/html/metrics_actions.json'
+    if not os.path.exists(filepath):
+        return jsonify({})
+    try:
+        with open(filepath, 'r') as f:
+            return jsonify(json.load(f))
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/actions', methods=['POST'])
+def save_actions():
+    import json
+    filepath = '/html/metrics_actions.json'
+    try:
+        data = request.json
+        with open(filepath, 'w') as f:
+            json.dump(data, f, indent=2)
+        return jsonify({"status": "success"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/api/metrics', methods=['GET'])
 def get_metrics():
     query = f'''

@@ -26,7 +26,7 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
         }
         
@@ -34,6 +34,9 @@
             margin-bottom: 2rem;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         h1 {
@@ -43,6 +46,25 @@
             color: #1a252c;
         }
         
+        .pill-btn {
+            background-color: var(--card-bg);
+            border: 1px solid #eaeaea;
+            color: var(--text-color);
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            text-decoration: none;
+        }
+
+        .pill-btn:hover {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
         .meta-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -127,7 +149,7 @@
             padding: 1rem;
             border-bottom: 1px solid var(--border-color);
             font-size: 0.95rem;
-            vertical-align: top;
+            vertical-align: middle;
         }
         
         tr:hover {
@@ -176,13 +198,69 @@
             color: #666;
             white-space: nowrap;
         }
+
+        .status-checkbox {
+            cursor: pointer;
+            margin-right: 0.2rem;
+            vertical-align: middle;
+        }
+
+        .status-label {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 0.8rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            user-select: none;
+            color: #555;
+        }
+
+        .status-label:hover {
+            color: #1a252c;
+        }
+
+        .action-input {
+            width: 100%;
+            padding: 0.4rem 0.6rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            background-color: #faf9f6;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .action-input:focus {
+            border-color: var(--accent-green);
+            background-color: #ffffff;
+        }
+        
+        .save-indicator {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background-color: #2c3539;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Apple Health XML Data Census</h1>
-            <p style="color: #666; margin: 0;">Detailed structural audit of the health data extracted directly from the Apple Health export package.</p>
+            <div>
+                <h1>Apple Health XML Data Census</h1>
+                <p style="color: #666; margin: 0;">Detailed structural audit of the health data extracted directly from the Apple Health export package.</p>
+            </div>
+            <a href="/" class="pill-btn">Back to Dashboard</a>
         </header>
         
         <div class="meta-grid">
@@ -206,15 +284,17 @@
         
         <div class="section">
             <h2>Record Types & Densities</h2>
-            <input type="text" id="record-search" class="search-box" placeholder="Search record type, unit, source..." onkeyup="filterTable('record-table', 'record-search')">
+            <input type="text" id="record-search" class="search-box" placeholder="Search record type, unit, source, action..." onkeyup="filterTable('record-table', 'record-search')">
             <table id="record-table">
                 <thead>
                     <tr>
-                        <th style="width: 30%;">Metric Type</th>
-                        <th style="width: 15%;">Record Count</th>
+                        <th style="width: 20%;">Metric Type</th>
+                        <th style="width: 10%;">Record Count</th>
+                        <th style="width: 20%;">Status</th>
+                        <th style="width: 15%;">Action Note</th>
                         <th style="width: 15%;">Sample Value / Unit</th>
-                        <th style="width: 20%;">Date Range</th>
-                        <th style="width: 20%;">Data Sources</th>
+                        <th style="width: 10%;">Date Range</th>
+                        <th style="width: 10%;">Data Sources</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -222,6 +302,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">HeartRate</td>
                         <td><span class="badge badge-count">236,163</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HeartRate" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HeartRate" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HeartRate" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="HeartRate" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>53</strong> <span style="color:#888; font-size:0.85rem;">count/min</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-15</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -230,14 +318,30 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">ActiveEnergyBurned</td>
                         <td><span class="badge badge-count">166,234</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="ActiveEnergyBurned" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="ActiveEnergyBurned" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="ActiveEnergyBurned" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="ActiveEnergyBurned" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>2.195</strong> <span style="color:#888; font-size:0.85rem;">kcal</span></td>
                         <td class="date-cell">2023-05-07 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Gary’s Apple Watch</span></td>
                     </tr>
         
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">PhysicalEffort</td>
                         <td><span class="badge badge-count">130,332</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="PhysicalEffort" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="PhysicalEffort" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="PhysicalEffort" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="PhysicalEffort" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>1.2</strong> <span style="color:#888; font-size:0.85rem;">kcal/hr·kg</span></td>
                         <td class="date-cell">2023-09-22 <span style="color:#ccc;">to</span> 2026-06-15</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -246,14 +350,30 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">BasalEnergyBurned</td>
                         <td><span class="badge badge-count">123,457</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="BasalEnergyBurned" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="BasalEnergyBurned" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="BasalEnergyBurned" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="BasalEnergyBurned" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>6.722</strong> <span style="color:#888; font-size:0.85rem;">kcal</span></td>
                         <td class="date-cell">2023-05-07 <span style="color:#ccc;">to</span> 2026-06-15</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
                     </tr>
         
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">DistanceWalkingRunning</td>
                         <td><span class="badge badge-count">79,225</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="DistanceWalkingRunning" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="DistanceWalkingRunning" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="DistanceWalkingRunning" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="DistanceWalkingRunning" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>0.0148355</strong> <span style="color:#888; font-size:0.85rem;">mi</span></td>
                         <td class="date-cell">2023-05-08 <span style="color:#ccc;">to</span> 2026-06-15</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -262,6 +382,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">StepCount</td>
                         <td><span class="badge badge-count">55,981</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="StepCount" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="StepCount" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="StepCount" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="StepCount" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>30</strong> <span style="color:#888; font-size:0.85rem;">count</span></td>
                         <td class="date-cell">2023-05-08 <span style="color:#ccc;">to</span> 2026-06-15</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -270,6 +398,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">RespiratoryRate</td>
                         <td><span class="badge badge-count">41,694</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="RespiratoryRate" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="RespiratoryRate" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="RespiratoryRate" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="RespiratoryRate" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>9.5</strong> <span style="color:#888; font-size:0.85rem;">count/min</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-14</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -278,6 +414,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">EnvironmentalAudioExposure</td>
                         <td><span class="badge badge-count">28,942</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="EnvironmentalAudioExposure" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="EnvironmentalAudioExposure" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="EnvironmentalAudioExposure" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="EnvironmentalAudioExposure" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>39.9622</strong> <span style="color:#888; font-size:0.85rem;">dBASPL</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-15</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -286,6 +430,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">AppleStandTime</td>
                         <td><span class="badge badge-count">28,455</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleStandTime" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleStandTime" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleStandTime" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="AppleStandTime" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>1</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-14</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -294,14 +446,30 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">SleepAnalysis</td>
                         <td><span class="badge badge-count">28,067</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="SleepAnalysis" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="SleepAnalysis" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="SleepAnalysis" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="SleepAnalysis" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>HKCategoryValueSleepAnalysisInBed</strong> <span style="color:#888; font-size:0.85rem;">N/A</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-14</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Sleep++</span></td>
+                        <td><span class="source-tag">Sleep++</span><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
                     </tr>
         
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">WalkingStepLength</td>
                         <td><span class="badge badge-count">25,921</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingStepLength" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingStepLength" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingStepLength" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="WalkingStepLength" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>83</strong> <span style="color:#888; font-size:0.85rem;">cm</span></td>
                         <td class="date-cell">2023-05-09 <span style="color:#ccc;">to</span> 2026-06-14</td>
                         <td><span class="source-tag">Persu17</span></td>
@@ -310,6 +478,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">WalkingSpeed</td>
                         <td><span class="badge badge-count">25,919</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingSpeed" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingSpeed" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingSpeed" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="WalkingSpeed" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>5.4</strong> <span style="color:#888; font-size:0.85rem;">km/hr</span></td>
                         <td class="date-cell">2023-05-09 <span style="color:#ccc;">to</span> 2026-06-14</td>
                         <td><span class="source-tag">Persu17</span></td>
@@ -318,6 +494,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">WalkingDoubleSupportPercentage</td>
                         <td><span class="badge badge-count">23,212</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingDoubleSupportPercentage" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingDoubleSupportPercentage" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingDoubleSupportPercentage" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="WalkingDoubleSupportPercentage" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>0.291</strong> <span style="color:#888; font-size:0.85rem;">%</span></td>
                         <td class="date-cell">2023-05-09 <span style="color:#ccc;">to</span> 2026-06-14</td>
                         <td><span class="source-tag">Persu17</span></td>
@@ -326,6 +510,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">AppleStandHour</td>
                         <td><span class="badge badge-count">14,675</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleStandHour" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleStandHour" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleStandHour" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="AppleStandHour" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>HKCategoryValueAppleStandHourIdle</strong> <span style="color:#888; font-size:0.85rem;">N/A</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-15</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -334,6 +526,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">WalkingAsymmetryPercentage</td>
                         <td><span class="badge badge-count">13,550</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingAsymmetryPercentage" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingAsymmetryPercentage" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingAsymmetryPercentage" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="WalkingAsymmetryPercentage" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>0</strong> <span style="color:#888; font-size:0.85rem;">%</span></td>
                         <td class="date-cell">2023-05-09 <span style="color:#ccc;">to</span> 2026-06-14</td>
                         <td><span class="source-tag">Persu17</span></td>
@@ -342,6 +542,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">AppleExerciseTime</td>
                         <td><span class="badge badge-count">13,421</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleExerciseTime" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleExerciseTime" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleExerciseTime" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="AppleExerciseTime" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>1</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
                         <td class="date-cell">2023-05-17 <span style="color:#ccc;">to</span> 2026-06-14</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -350,6 +558,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">OxygenSaturation</td>
                         <td><span class="badge badge-count">10,868</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="OxygenSaturation" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="OxygenSaturation" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="OxygenSaturation" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="OxygenSaturation" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>0.98</strong> <span style="color:#888; font-size:0.85rem;">%</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-15</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Blood Oxygen</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -358,6 +574,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">HeartRateVariabilitySDNN</td>
                         <td><span class="badge badge-count">7,471</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HeartRateVariabilitySDNN" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HeartRateVariabilitySDNN" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HeartRateVariabilitySDNN" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="HeartRateVariabilitySDNN" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>31.111</strong> <span style="color:#888; font-size:0.85rem;">ms</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-15</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -366,6 +590,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">TimeInDaylight</td>
                         <td><span class="badge badge-count">5,633</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="TimeInDaylight" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="TimeInDaylight" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="TimeInDaylight" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="TimeInDaylight" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>5</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
                         <td class="date-cell">2023-09-23 <span style="color:#ccc;">to</span> 2026-06-14</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -374,14 +606,30 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">HeadphoneAudioExposure</td>
                         <td><span class="badge badge-count">5,000</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HeadphoneAudioExposure" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HeadphoneAudioExposure" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HeadphoneAudioExposure" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="HeadphoneAudioExposure" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>76.3761</strong> <span style="color:#888; font-size:0.85rem;">dBASPL</span></td>
                         <td class="date-cell">2023-05-12 <span style="color:#ccc;">to</span> 2026-06-12</td>
-                        <td><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span></td>
                     </tr>
         
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">FlightsClimbed</td>
                         <td><span class="badge badge-count">3,133</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="FlightsClimbed" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="FlightsClimbed" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="FlightsClimbed" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="FlightsClimbed" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>1</strong> <span style="color:#888; font-size:0.85rem;">count</span></td>
                         <td class="date-cell">2023-05-11 <span style="color:#ccc;">to</span> 2026-06-14</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -390,6 +638,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">EnvironmentalSoundReduction</td>
                         <td><span class="badge badge-count">2,008</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="EnvironmentalSoundReduction" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="EnvironmentalSoundReduction" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="EnvironmentalSoundReduction" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="EnvironmentalSoundReduction" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>27.4717</strong> <span style="color:#888; font-size:0.85rem;">dBASPL</span></td>
                         <td class="date-cell">2023-07-19 <span style="color:#ccc;">to</span> 2026-06-12</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -398,6 +654,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">StairDescentSpeed</td>
                         <td><span class="badge badge-count">1,523</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="StairDescentSpeed" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="StairDescentSpeed" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="StairDescentSpeed" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="StairDescentSpeed" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>0.322823</strong> <span style="color:#888; font-size:0.85rem;">m/s</span></td>
                         <td class="date-cell">2023-05-17 <span style="color:#ccc;">to</span> 2026-06-15</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -406,6 +670,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">StairAscentSpeed</td>
                         <td><span class="badge badge-count">1,108</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="StairAscentSpeed" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="StairAscentSpeed" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="StairAscentSpeed" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="StairAscentSpeed" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>0.237744</strong> <span style="color:#888; font-size:0.85rem;">m/s</span></td>
                         <td class="date-cell">2023-05-17 <span style="color:#ccc;">to</span> 2026-06-15</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -414,22 +686,46 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">RestingHeartRate</td>
                         <td><span class="badge badge-count">834</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="RestingHeartRate" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="RestingHeartRate" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="RestingHeartRate" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="RestingHeartRate" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>58</strong> <span style="color:#888; font-size:0.85rem;">count/min</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-14</td>
-                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Athlytic</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                        <td><span class="source-tag">Athlytic</span><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
                     </tr>
         
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">Height</td>
                         <td><span class="badge badge-count">647</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="Height" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="Height" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="Height" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="Height" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>6.08333</strong> <span style="color:#888; font-size:0.85rem;">ft</span></td>
                         <td class="date-cell">2021-03-24 <span style="color:#ccc;">to</span> 2026-06-09</td>
-                        <td><span class="source-tag">Persu17</span><span class="source-tag">eufy Life</span><span class="source-tag">Health</span></td>
+                        <td><span class="source-tag">Health</span><span class="source-tag">Persu17</span><span class="source-tag">eufy Life</span></td>
                     </tr>
         
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">BodyMass</td>
                         <td><span class="badge badge-count">644</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="BodyMass" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="BodyMass" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="BodyMass" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="BodyMass" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>103.8</strong> <span style="color:#888; font-size:0.85rem;">kg</span></td>
                         <td class="date-cell">2021-03-24 <span style="color:#ccc;">to</span> 2026-06-09</td>
                         <td><span class="source-tag">eufy Life</span></td>
@@ -438,6 +734,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">BodyMassIndex</td>
                         <td><span class="badge badge-count">642</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="BodyMassIndex" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="BodyMassIndex" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="BodyMassIndex" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="BodyMassIndex" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>30.3287</strong> <span style="color:#888; font-size:0.85rem;">count</span></td>
                         <td class="date-cell">2021-03-24 <span style="color:#ccc;">to</span> 2026-06-09</td>
                         <td><span class="source-tag">eufy Life</span></td>
@@ -446,6 +750,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">WalkingHeartRateAverage</td>
                         <td><span class="badge badge-count">629</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingHeartRateAverage" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingHeartRateAverage" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="WalkingHeartRateAverage" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="WalkingHeartRateAverage" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>74</strong> <span style="color:#888; font-size:0.85rem;">count/min</span></td>
                         <td class="date-cell">2023-05-17 <span style="color:#ccc;">to</span> 2026-06-13</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -454,6 +766,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">BodyFatPercentage</td>
                         <td><span class="badge badge-count">621</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="BodyFatPercentage" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="BodyFatPercentage" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="BodyFatPercentage" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="BodyFatPercentage" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>0.333445</strong> <span style="color:#888; font-size:0.85rem;">%</span></td>
                         <td class="date-cell">2021-03-24 <span style="color:#ccc;">to</span> 2026-06-09</td>
                         <td><span class="source-tag">eufy Life</span></td>
@@ -462,6 +782,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">LeanBodyMass</td>
                         <td><span class="badge badge-count">621</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="LeanBodyMass" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="LeanBodyMass" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="LeanBodyMass" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="LeanBodyMass" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>69.2</strong> <span style="color:#888; font-size:0.85rem;">kg</span></td>
                         <td class="date-cell">2021-03-24 <span style="color:#ccc;">to</span> 2026-06-09</td>
                         <td><span class="source-tag">eufy Life</span></td>
@@ -470,6 +798,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">AppleSleepingBreathingDisturbances</td>
                         <td><span class="badge badge-count">531</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleSleepingBreathingDisturbances" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleSleepingBreathingDisturbances" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleSleepingBreathingDisturbances" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="AppleSleepingBreathingDisturbances" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>6.44819</strong> <span style="color:#888; font-size:0.85rem;">count</span></td>
                         <td class="date-cell">2025-01-11 <span style="color:#ccc;">to</span> 2026-06-14</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -478,6 +814,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">DistanceCycling</td>
                         <td><span class="badge badge-count">226</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="DistanceCycling" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="DistanceCycling" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="DistanceCycling" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="DistanceCycling" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>0.0491419</strong> <span style="color:#888; font-size:0.85rem;">mi</span></td>
                         <td class="date-cell">2023-09-05 <span style="color:#ccc;">to</span> 2024-11-14</td>
                         <td><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -486,6 +830,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">VO2Max</td>
                         <td><span class="badge badge-count">102</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="VO2Max" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="VO2Max" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="VO2Max" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="VO2Max" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>29.21</strong> <span style="color:#888; font-size:0.85rem;">mL/min·kg</span></td>
                         <td class="date-cell">2023-06-01 <span style="color:#ccc;">to</span> 2026-06-09</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -494,6 +846,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">AppleWalkingSteadiness</td>
                         <td><span class="badge badge-count">85</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleWalkingSteadiness" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleWalkingSteadiness" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AppleWalkingSteadiness" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="AppleWalkingSteadiness" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>0.944469</strong> <span style="color:#888; font-size:0.85rem;">%</span></td>
                         <td class="date-cell">2023-05-08 <span style="color:#ccc;">to</span> 2026-06-12</td>
                         <td><span class="source-tag">Persu17</span></td>
@@ -502,6 +862,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">SixMinuteWalkTestDistance</td>
                         <td><span class="badge badge-count">60</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="SixMinuteWalkTestDistance" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="SixMinuteWalkTestDistance" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="SixMinuteWalkTestDistance" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="SixMinuteWalkTestDistance" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>500</strong> <span style="color:#888; font-size:0.85rem;">m</span></td>
                         <td class="date-cell">2023-05-30 <span style="color:#ccc;">to</span> 2026-06-14</td>
                         <td><span class="source-tag">Persu17</span></td>
@@ -510,6 +878,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">AudioExposureEvent</td>
                         <td><span class="badge badge-count">55</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AudioExposureEvent" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AudioExposureEvent" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="AudioExposureEvent" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="AudioExposureEvent" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>HKCategoryValueEnvironmentalAudioExposureEventMomentaryLimit</strong> <span style="color:#888; font-size:0.85rem;">N/A</span></td>
                         <td class="date-cell">2023-05-17 <span style="color:#ccc;">to</span> 2025-12-27</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -518,6 +894,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">HeartRateRecoveryOneMinute</td>
                         <td><span class="badge badge-count">21</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HeartRateRecoveryOneMinute" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HeartRateRecoveryOneMinute" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HeartRateRecoveryOneMinute" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="HeartRateRecoveryOneMinute" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>27.056</strong> <span style="color:#888; font-size:0.85rem;">count/min</span></td>
                         <td class="date-cell">2023-09-09 <span style="color:#ccc;">to</span> 2026-04-21</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -526,6 +910,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">NumberOfAlcoholicBeverages</td>
                         <td><span class="badge badge-count">3</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="NumberOfAlcoholicBeverages" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="NumberOfAlcoholicBeverages" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="NumberOfAlcoholicBeverages" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="NumberOfAlcoholicBeverages" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>5</strong> <span style="color:#888; font-size:0.85rem;">count</span></td>
                         <td class="date-cell">2026-06-12 <span style="color:#ccc;">to</span> 2026-06-13</td>
                         <td><span class="source-tag">Health</span></td>
@@ -534,6 +926,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">SleepDurationGoal</td>
                         <td><span class="badge badge-one">1 Record</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="SleepDurationGoal" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="SleepDurationGoal" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="SleepDurationGoal" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="SleepDurationGoal" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>8</strong> <span style="color:#888; font-size:0.85rem;">hr</span></td>
                         <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2023-05-16</td>
                         <td><span class="source-tag">Sleep</span></td>
@@ -542,6 +942,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">HighHeartRateEvent</td>
                         <td><span class="badge badge-one">1 Record</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HighHeartRateEvent" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HighHeartRateEvent" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="HighHeartRateEvent" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="HighHeartRateEvent" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>HKCategoryValueNotApplicable</strong> <span style="color:#888; font-size:0.85rem;">N/A</span></td>
                         <td class="date-cell">2025-08-05 <span style="color:#ccc;">to</span> 2025-08-05</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span></td>
@@ -553,15 +961,17 @@
         
         <div class="section">
             <h2>Workout Types</h2>
-            <input type="text" id="workout-search" class="search-box" placeholder="Search workout type..." onkeyup="filterTable('workout-table', 'workout-search')">
+            <input type="text" id="workout-search" class="search-box" placeholder="Search workout type, action..." onkeyup="filterTable('workout-table', 'workout-search')">
             <table id="workout-table">
                 <thead>
                     <tr>
-                        <th style="width: 30%;">Workout Type</th>
-                        <th style="width: 15%;">Record Count</th>
+                        <th style="width: 20%;">Workout Type</th>
+                        <th style="width: 10%;">Record Count</th>
+                        <th style="width: 20%;">Status</th>
+                        <th style="width: 15%;">Action Note</th>
                         <th style="width: 15%;">Sample Duration</th>
-                        <th style="width: 20%;">Date Range</th>
-                        <th style="width: 20%;">Data Sources</th>
+                        <th style="width: 10%;">Date Range</th>
+                        <th style="width: 10%;">Data Sources</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -569,6 +979,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">Walking</td>
                         <td><span class="badge badge-count">67</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="Walking" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="Walking" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="Walking" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="Walking" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>11.27210195263227</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
                         <td class="date-cell">2023-05-29 <span style="color:#ccc;">to</span> 2026-06-02</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -577,6 +995,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">Other</td>
                         <td><span class="badge badge-count">7</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="Other" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="Other" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="Other" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="Other" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>23.27965446710586</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
                         <td class="date-cell">2023-10-27 <span style="color:#ccc;">to</span> 2025-11-29</td>
                         <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -585,6 +1011,14 @@
                     <tr>
                         <td style="font-weight: 600; color: #1a252c;">Cycling</td>
                         <td><span class="badge badge-count">5</span></td>
+                        <td>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="Cycling" data-status="active" onclick="handleStatusClick(this)"> Active</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="Cycling" data-status="pending" onclick="handleStatusClick(this)"> Pending</label>
+                            <label class="status-label"><input type="checkbox" class="status-checkbox" data-metric="Cycling" data-status="ignore" onclick="handleStatusClick(this)"> Ignore</label>
+                        </td>
+                        <td>
+                            <input type="text" class="action-input" data-metric="Cycling" placeholder="Action..." onblur="saveActionNote(this)" onkeypress="if(event.key === 'Enter') this.blur()">
+                        </td>
                         <td><strong>58.43248369892438</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
                         <td class="date-cell">2023-09-05 <span style="color:#ccc;">to</span> 2024-11-14</td>
                         <td><span class="source-tag">Gary’s Apple Watch</span></td>
@@ -665,7 +1099,104 @@
         </div>
     </div>
     
+    <div id="save-toast" class="save-indicator">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color:#4cd964"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Saving actions...
+    </div>
+
     <script>
+        let actionsData = {};
+
+        function showSaveIndicator() {
+            const toast = document.getElementById('save-toast');
+            toast.style.display = 'inline-flex';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 1000);
+        }
+
+        async function loadActions() {
+            try {
+                const pin = localStorage.getItem('health_pin') || '';
+                const res = await fetch('/api/actions', {
+                    headers: { 'X-PIN': pin }
+                });
+                if (res.status === 401) {
+                    console.error('Unauthorized actions loading');
+                    return;
+                }
+                actionsData = await res.json();
+                
+                // Populate DOM
+                document.querySelectorAll('.status-checkbox').forEach(cb => {
+                    const metric = cb.dataset.metric;
+                    const status = cb.dataset.status;
+                    if (actionsData[metric] && actionsData[metric].status === status) {
+                        cb.checked = true;
+                    }
+                });
+                
+                document.querySelectorAll('.action-input').forEach(input => {
+                    const metric = input.dataset.metric;
+                    if (actionsData[metric] && actionsData[metric].action) {
+                        input.value = actionsData[metric].action;
+                    }
+                });
+            } catch (e) {
+                console.error('Failed to load actions', e);
+            }
+        }
+
+        async function saveActionsToServer() {
+            try {
+                showSaveIndicator();
+                const pin = localStorage.getItem('health_pin') || '';
+                await fetch('/api/actions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-PIN': pin
+                    },
+                    body: JSON.stringify(actionsData)
+                });
+            } catch (e) {
+                console.error('Failed to save actions to server', e);
+            }
+        }
+
+        function handleStatusClick(elem) {
+            const metric = elem.dataset.metric;
+            const status = elem.dataset.status;
+            const isChecked = elem.checked;
+            
+            // Uncheck other checkboxes for this metric
+            document.querySelectorAll(`.status-checkbox[data-metric="${metric}"]`).forEach(cb => {
+                if (cb !== elem) cb.checked = false;
+            });
+            
+            if (!actionsData[metric]) {
+                actionsData[metric] = { status: null, action: '' };
+            }
+            
+            actionsData[metric].status = isChecked ? status : null;
+            saveActionsToServer();
+        }
+
+        function saveActionNote(elem) {
+            const metric = elem.dataset.metric;
+            const note = elem.value;
+            
+            if (!actionsData[metric]) {
+                actionsData[metric] = { status: null, action: '' };
+            }
+            
+            // Only save if the note has actually changed
+            if (actionsData[metric].action !== note) {
+                actionsData[metric].action = note;
+                saveActionsToServer();
+            }
+        }
+
         function filterTable(tableId, inputId) {
             var input, filter, table, tr, td, i, j, txtValue, match;
             input = document.getElementById(inputId);
@@ -678,7 +1209,10 @@
                 match = false;
                 for (j = 0; j < td.length; j++) {
                     if (td[j]) {
-                        txtValue = td[j].textContent || td[j].innerText;
+                        // Include text inputs values in the filter logic
+                        const inputEl = td[j].querySelector('.action-input');
+                        txtValue = inputEl ? inputEl.value : (td[j].textContent || td[j].innerText);
+                        
                         if (txtValue.toUpperCase().indexOf(filter) > -1) {
                             match = true;
                             break;
@@ -688,6 +1222,8 @@
                 tr[i].style.display = match ? "" : "none";
             }
         }
+        
+        document.addEventListener('DOMContentLoaded', loadActions);
     </script>
 </body>
 </html>
