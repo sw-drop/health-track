@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple Health XML Data Summary</title>
+    <style>
+        :root {
+            --bg-color: #faf9f6;
+            --text-color: #2c3539;
+            --card-bg: #ffffff;
+            --accent-green: #8da399;
+            --border-radius: 12px;
+            --spacing: 2rem;
+            --shadow: 0 4px 20px rgba(0,0,0,0.02);
+            --border-color: rgba(0,0,0,0.06);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: var(--spacing);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.5rem;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+            color: #1a252c;
+        }
+        
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .meta-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        .meta-label {
+            font-size: 0.85rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.05rem;
+        }
+        
+        .meta-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a252c;
+            margin-top: 0.2rem;
+        }
+        
+        .section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+        
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--accent-green);
+            padding-left: 0.8rem;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-sizing: border-box;
+            background-color: #faf9f6;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        
+        .search-box:focus {
+            border-color: var(--accent-green);
+            background-color: #fff;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        
+        th {
+            padding: 0.8rem 1rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #888;
+            border-bottom: 2px solid var(--border-color);
+            letter-spacing: 0.05rem;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+            vertical-align: top;
+        }
+        
+        tr:hover {
+            background-color: #fafdfb;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .badge-count {
+            background-color: #eef2f0;
+            color: #555;
+        }
+        
+        .badge-one {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        
+        .badge-zero {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .source-tag {
+            display: inline-block;
+            background-color: #eef2f5;
+            color: #495057;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-right: 0.3rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .date-cell {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #666;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Apple Health XML Data Census</h1>
+            <p style="color: #666; margin: 0;">Detailed structural audit of the health data extracted directly from the Apple Health export package.</p>
+        </header>
+        
+        <div class="meta-grid">
+            <div class="meta-card">
+                <div class="meta-label">Total Record Count</div>
+                <div class="meta-value">1,077,715</div>
+            </div>
+            <div class="meta-card">
+                <div class="meta-label">Total Workout Count</div>
+                <div class="meta-value">79</div>
+            </div>
+            <div class="meta-card">
+                <div class="meta-label">Unique Record Types</div>
+                <div class="meta-value">41</div>
+            </div>
+            <div class="meta-card">
+                <div class="meta-label">Unique Workout Types</div>
+                <div class="meta-value">3</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Record Types & Densities</h2>
+            <input type="text" id="record-search" class="search-box" placeholder="Search record type, unit, source..." onkeyup="filterTable('record-table', 'record-search')">
+            <table id="record-table">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Metric Type</th>
+                        <th style="width: 15%;">Record Count</th>
+                        <th style="width: 15%;">Sample Value / Unit</th>
+                        <th style="width: 20%;">Date Range</th>
+                        <th style="width: 20%;">Data Sources</th>
+                    </tr>
+                </thead>
+                <tbody>
+    
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">HeartRate</td>
+                        <td><span class="badge badge-count">236,163</span></td>
+                        <td><strong>53</strong> <span style="color:#888; font-size:0.85rem;">count/min</span></td>
+                        <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-15</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">ActiveEnergyBurned</td>
+                        <td><span class="badge badge-count">166,234</span></td>
+                        <td><strong>2.195</strong> <span style="color:#888; font-size:0.85rem;">kcal</span></td>
+                        <td class="date-cell">2023-05-07 <span style="color:#ccc;">to</span> 2026-06-15</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">PhysicalEffort</td>
+                        <td><span class="badge badge-count">130,332</span></td>
+                        <td><strong>1.2</strong> <span style="color:#888; font-size:0.85rem;">kcal/hr·kg</span></td>
+                        <td class="date-cell">2023-09-22 <span style="color:#ccc;">to</span> 2026-06-15</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">BasalEnergyBurned</td>
+                        <td><span class="badge badge-count">123,457</span></td>
+                        <td><strong>6.722</strong> <span style="color:#888; font-size:0.85rem;">kcal</span></td>
+                        <td class="date-cell">2023-05-07 <span style="color:#ccc;">to</span> 2026-06-15</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">DistanceWalkingRunning</td>
+                        <td><span class="badge badge-count">79,225</span></td>
+                        <td><strong>0.0148355</strong> <span style="color:#888; font-size:0.85rem;">mi</span></td>
+                        <td class="date-cell">2023-05-08 <span style="color:#ccc;">to</span> 2026-06-15</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">StepCount</td>
+                        <td><span class="badge badge-count">55,981</span></td>
+                        <td><strong>30</strong> <span style="color:#888; font-size:0.85rem;">count</span></td>
+                        <td class="date-cell">2023-05-08 <span style="color:#ccc;">to</span> 2026-06-15</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s iPhone</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">RespiratoryRate</td>
+                        <td><span class="badge badge-count">41,694</span></td>
+                        <td><strong>9.5</strong> <span style="color:#888; font-size:0.85rem;">count/min</span></td>
+                        <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-14</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">EnvironmentalAudioExposure</td>
+                        <td><span class="badge badge-count">28,942</span></td>
+                        <td><strong>39.9622</strong> <span style="color:#888; font-size:0.85rem;">dBASPL</span></td>
+                        <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-15</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">AppleStandTime</td>
+                        <td><span class="badge badge-count">28,455</span></td>
+                        <td><strong>1</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
+                        <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-14</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">SleepAnalysis</td>
+                        <td><span class="badge badge-count">28,067</span></td>
+                        <td><strong>HKCategoryValueSleepAnalysisInBed</strong> <span style="color:#888; font-size:0.85rem;">N/A</span></td>
+                        <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-14</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span><span class="source-tag">Sleep++</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">WalkingStepLength</td>
+                        <td><span class="badge badge-count">25,921</span></td>
+                        <td><strong>83</strong> <span style="color:#888; font-size:0.85rem;">cm</span></td>
+                        <td class="date-cell">2023-05-09 <span style="color:#ccc;">to</span> 2026-06-14</td>
+                        <td><span class="source-tag">Persu17</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">WalkingSpeed</td>
+                        <td><span class="badge badge-count">25,919</span></td>
+                        <td><strong>5.4</strong> <span style="color:#888; font-size:0.85rem;">km/hr</span></td>
+                        <td class="date-cell">2023-05-09 <span style="color:#ccc;">to</span> 2026-06-14</td>
+                        <td><span class="source-tag">Persu17</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">WalkingDoubleSupportPercentage</td>
+                        <td><span class="badge badge-count">23,212</span></td>
+                        <td><strong>0.291</strong> <span style="color:#888; font-size:0.85rem;">%</span></td>
+                        <td class="date-cell">2023-05-09 <span style="color:#ccc;">to</span> 2026-06-14</td>
+                        <td><span class="source-tag">Persu17</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">AppleStandHour</td>
+                        <td><span class="badge badge-count">14,675</span></td>
+                        <td><strong>HKCategoryValueAppleStandHourIdle</strong> <span style="color:#888; font-size:0.85rem;">N/A</span></td>
+                        <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-15</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">WalkingAsymmetryPercentage</td>
+                        <td><span class="badge badge-count">13,550</span></td>
+                        <td><strong>0</strong> <span style="color:#888; font-size:0.85rem;">%</span></td>
+                        <td class="date-cell">2023-05-09 <span style="color:#ccc;">to</span> 2026-06-14</td>
+                        <td><span class="source-tag">Persu17</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">AppleExerciseTime</td>
+                        <td><span class="badge badge-count">13,421</span></td>
+                        <td><strong>1</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
+                        <td class="date-cell">2023-05-17 <span style="color:#ccc;">to</span> 2026-06-14</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">OxygenSaturation</td>
+                        <td><span class="badge badge-count">10,868</span></td>
+                        <td><strong>0.98</strong> <span style="color:#888; font-size:0.85rem;">%</span></td>
+                        <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-15</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Blood Oxygen</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">HeartRateVariabilitySDNN</td>
+                        <td><span class="badge badge-count">7,471</span></td>
+                        <td><strong>31.111</strong> <span style="color:#888; font-size:0.85rem;">ms</span></td>
+                        <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-15</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">TimeInDaylight</td>
+                        <td><span class="badge badge-count">5,633</span></td>
+                        <td><strong>5</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
+                        <td class="date-cell">2023-09-23 <span style="color:#ccc;">to</span> 2026-06-14</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">HeadphoneAudioExposure</td>
+                        <td><span class="badge badge-count">5,000</span></td>
+                        <td><strong>76.3761</strong> <span style="color:#888; font-size:0.85rem;">dBASPL</span></td>
+                        <td class="date-cell">2023-05-12 <span style="color:#ccc;">to</span> 2026-06-12</td>
+                        <td><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch 10</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">FlightsClimbed</td>
+                        <td><span class="badge badge-count">3,133</span></td>
+                        <td><strong>1</strong> <span style="color:#888; font-size:0.85rem;">count</span></td>
+                        <td class="date-cell">2023-05-11 <span style="color:#ccc;">to</span> 2026-06-14</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Persu17</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">EnvironmentalSoundReduction</td>
+                        <td><span class="badge badge-count">2,008</span></td>
+                        <td><strong>27.4717</strong> <span style="color:#888; font-size:0.85rem;">dBASPL</span></td>
+                        <td class="date-cell">2023-07-19 <span style="color:#ccc;">to</span> 2026-06-12</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">StairDescentSpeed</td>
+                        <td><span class="badge badge-count">1,523</span></td>
+                        <td><strong>0.322823</strong> <span style="color:#888; font-size:0.85rem;">m/s</span></td>
+                        <td class="date-cell">2023-05-17 <span style="color:#ccc;">to</span> 2026-06-15</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">StairAscentSpeed</td>
+                        <td><span class="badge badge-count">1,108</span></td>
+                        <td><strong>0.237744</strong> <span style="color:#888; font-size:0.85rem;">m/s</span></td>
+                        <td class="date-cell">2023-05-17 <span style="color:#ccc;">to</span> 2026-06-15</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">RestingHeartRate</td>
+                        <td><span class="badge badge-count">834</span></td>
+                        <td><strong>58</strong> <span style="color:#888; font-size:0.85rem;">count/min</span></td>
+                        <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2026-06-14</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Athlytic</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">Height</td>
+                        <td><span class="badge badge-count">647</span></td>
+                        <td><strong>6.08333</strong> <span style="color:#888; font-size:0.85rem;">ft</span></td>
+                        <td class="date-cell">2021-03-24 <span style="color:#ccc;">to</span> 2026-06-09</td>
+                        <td><span class="source-tag">Persu17</span><span class="source-tag">eufy Life</span><span class="source-tag">Health</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">BodyMass</td>
+                        <td><span class="badge badge-count">644</span></td>
+                        <td><strong>103.8</strong> <span style="color:#888; font-size:0.85rem;">kg</span></td>
+                        <td class="date-cell">2021-03-24 <span style="color:#ccc;">to</span> 2026-06-09</td>
+                        <td><span class="source-tag">eufy Life</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">BodyMassIndex</td>
+                        <td><span class="badge badge-count">642</span></td>
+                        <td><strong>30.3287</strong> <span style="color:#888; font-size:0.85rem;">count</span></td>
+                        <td class="date-cell">2021-03-24 <span style="color:#ccc;">to</span> 2026-06-09</td>
+                        <td><span class="source-tag">eufy Life</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">WalkingHeartRateAverage</td>
+                        <td><span class="badge badge-count">629</span></td>
+                        <td><strong>74</strong> <span style="color:#888; font-size:0.85rem;">count/min</span></td>
+                        <td class="date-cell">2023-05-17 <span style="color:#ccc;">to</span> 2026-06-13</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">BodyFatPercentage</td>
+                        <td><span class="badge badge-count">621</span></td>
+                        <td><strong>0.333445</strong> <span style="color:#888; font-size:0.85rem;">%</span></td>
+                        <td class="date-cell">2021-03-24 <span style="color:#ccc;">to</span> 2026-06-09</td>
+                        <td><span class="source-tag">eufy Life</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">LeanBodyMass</td>
+                        <td><span class="badge badge-count">621</span></td>
+                        <td><strong>69.2</strong> <span style="color:#888; font-size:0.85rem;">kg</span></td>
+                        <td class="date-cell">2021-03-24 <span style="color:#ccc;">to</span> 2026-06-09</td>
+                        <td><span class="source-tag">eufy Life</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">AppleSleepingBreathingDisturbances</td>
+                        <td><span class="badge badge-count">531</span></td>
+                        <td><strong>6.44819</strong> <span style="color:#888; font-size:0.85rem;">count</span></td>
+                        <td class="date-cell">2025-01-11 <span style="color:#ccc;">to</span> 2026-06-14</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">DistanceCycling</td>
+                        <td><span class="badge badge-count">226</span></td>
+                        <td><strong>0.0491419</strong> <span style="color:#888; font-size:0.85rem;">mi</span></td>
+                        <td class="date-cell">2023-09-05 <span style="color:#ccc;">to</span> 2024-11-14</td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">VO2Max</td>
+                        <td><span class="badge badge-count">102</span></td>
+                        <td><strong>29.21</strong> <span style="color:#888; font-size:0.85rem;">mL/min·kg</span></td>
+                        <td class="date-cell">2023-06-01 <span style="color:#ccc;">to</span> 2026-06-09</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">AppleWalkingSteadiness</td>
+                        <td><span class="badge badge-count">85</span></td>
+                        <td><strong>0.944469</strong> <span style="color:#888; font-size:0.85rem;">%</span></td>
+                        <td class="date-cell">2023-05-08 <span style="color:#ccc;">to</span> 2026-06-12</td>
+                        <td><span class="source-tag">Persu17</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">SixMinuteWalkTestDistance</td>
+                        <td><span class="badge badge-count">60</span></td>
+                        <td><strong>500</strong> <span style="color:#888; font-size:0.85rem;">m</span></td>
+                        <td class="date-cell">2023-05-30 <span style="color:#ccc;">to</span> 2026-06-14</td>
+                        <td><span class="source-tag">Persu17</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">AudioExposureEvent</td>
+                        <td><span class="badge badge-count">55</span></td>
+                        <td><strong>HKCategoryValueEnvironmentalAudioExposureEventMomentaryLimit</strong> <span style="color:#888; font-size:0.85rem;">N/A</span></td>
+                        <td class="date-cell">2023-05-17 <span style="color:#ccc;">to</span> 2025-12-27</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">HeartRateRecoveryOneMinute</td>
+                        <td><span class="badge badge-count">21</span></td>
+                        <td><strong>27.056</strong> <span style="color:#888; font-size:0.85rem;">count/min</span></td>
+                        <td class="date-cell">2023-09-09 <span style="color:#ccc;">to</span> 2026-04-21</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">NumberOfAlcoholicBeverages</td>
+                        <td><span class="badge badge-count">3</span></td>
+                        <td><strong>5</strong> <span style="color:#888; font-size:0.85rem;">count</span></td>
+                        <td class="date-cell">2026-06-12 <span style="color:#ccc;">to</span> 2026-06-13</td>
+                        <td><span class="source-tag">Health</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">SleepDurationGoal</td>
+                        <td><span class="badge badge-one">1 Record</span></td>
+                        <td><strong>8</strong> <span style="color:#888; font-size:0.85rem;">hr</span></td>
+                        <td class="date-cell">2023-05-16 <span style="color:#ccc;">to</span> 2023-05-16</td>
+                        <td><span class="source-tag">Sleep</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">HighHeartRateEvent</td>
+                        <td><span class="badge badge-one">1 Record</span></td>
+                        <td><strong>HKCategoryValueNotApplicable</strong> <span style="color:#888; font-size:0.85rem;">N/A</span></td>
+                        <td class="date-cell">2025-08-05 <span style="color:#ccc;">to</span> 2025-08-05</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span></td>
+                    </tr>
+        
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section">
+            <h2>Workout Types</h2>
+            <input type="text" id="workout-search" class="search-box" placeholder="Search workout type..." onkeyup="filterTable('workout-table', 'workout-search')">
+            <table id="workout-table">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Workout Type</th>
+                        <th style="width: 15%;">Record Count</th>
+                        <th style="width: 15%;">Sample Duration</th>
+                        <th style="width: 20%;">Date Range</th>
+                        <th style="width: 20%;">Data Sources</th>
+                    </tr>
+                </thead>
+                <tbody>
+    
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">Walking</td>
+                        <td><span class="badge badge-count">67</span></td>
+                        <td><strong>11.27210195263227</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
+                        <td class="date-cell">2023-05-29 <span style="color:#ccc;">to</span> 2026-06-02</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">Other</td>
+                        <td><span class="badge badge-count">7</span></td>
+                        <td><strong>23.27965446710586</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
+                        <td class="date-cell">2023-10-27 <span style="color:#ccc;">to</span> 2025-11-29</td>
+                        <td><span class="source-tag">Gary’s Apple Watch 10</span><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-weight: 600; color: #1a252c;">Cycling</td>
+                        <td><span class="badge badge-count">5</span></td>
+                        <td><strong>58.43248369892438</strong> <span style="color:#888; font-size:0.85rem;">min</span></td>
+                        <td class="date-cell">2023-09-05 <span style="color:#ccc;">to</span> 2024-11-14</td>
+                        <td><span class="source-tag">Gary’s Apple Watch</span></td>
+                    </tr>
+        
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section">
+            <h2>Other XML Elements Found</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Element Tag</th>
+                        <th>Occurrence Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+    
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;ExportDate&gt;</td>
+                        <td><span class="badge badge-count">1</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;Me&gt;</td>
+                        <td><span class="badge badge-count">1</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;MetadataEntry&gt;</td>
+                        <td><span class="badge badge-count">697,012</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;WorkoutEvent&gt;</td>
+                        <td><span class="badge badge-count">620</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;WorkoutStatistics&gt;</td>
+                        <td><span class="badge badge-count">307</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;FileReference&gt;</td>
+                        <td><span class="badge badge-count">63</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;WorkoutRoute&gt;</td>
+                        <td><span class="badge badge-count">63</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;ActivitySummary&gt;</td>
+                        <td><span class="badge badge-count">889</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;InstantaneousBeatsPerMinute&gt;</td>
+                        <td><span class="badge badge-count">399,573</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;HeartRateVariabilityMetadataList&gt;</td>
+                        <td><span class="badge badge-count">7,471</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td style="font-family: monospace; font-weight: bold; color: #555;">&lt;HealthData&gt;</td>
+                        <td><span class="badge badge-count">1</span></td>
+                    </tr>
+        
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        function filterTable(tableId, inputId) {
+            var input, filter, table, tr, td, i, j, txtValue, match;
+            input = document.getElementById(inputId);
+            filter = input.value.toUpperCase();
+            table = document.getElementById(tableId);
+            tr = table.getElementsByTagName("tr");
+            
+            for (i = 1; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td");
+                match = false;
+                for (j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        txtValue = td[j].textContent || td[j].innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            match = true;
+                            break;
+                        }
+                    }
+                }
+                tr[i].style.display = match ? "" : "none";
+            }
+        }
+    </script>
+</body>
+</html>
