@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  health_api:
+  health:
     build: ./health_api
-    container_name: health_api
+    container_name: health
     volumes:
       - ./html:/html:rw
     environment:

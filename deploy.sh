@@ -19,6 +19,9 @@ if [ $? -eq 0 ]; then
     # Start the new health dashboard stack
     ssh Eadu 'cd /mnt/ssd/docker/eufy && docker compose up -d --build'
     
+    # Reload Nginx to ensure it picks up any new IP addresses for the eufy containers
+    ssh Eadu 'docker exec global_nginx nginx -s reload'
+    
     # Run the ingestion script in the background to populate the new database
     ssh Eadu 'docker start health_ingest'
 
