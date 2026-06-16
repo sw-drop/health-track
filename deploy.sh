@@ -9,16 +9,12 @@ git commit -m "$COMMIT_MSG"
 git push
 
 echo "--- 2. Syncing files to Eadu (DietPi) via rsync ---"
-rsync -avz ../infra/ Eadu:/mnt/ssd/docker/infra/
 rsync -avz --exclude 'legacy_eufy' --exclude '.git' ./ Eadu:/mnt/ssd/docker/eufy/
 
 if [ $? -eq 0 ]; then
     echo "--- 3. Restarting containers on Eadu ---"
     # Stop old legacy health stack if it was running and remove orphans
     ssh Eadu 'cd /mnt/ssd/docker/eufy && docker compose down --remove-orphans'
-    
-    # Bring up infra stack (creates the network, influxdb, grafana, nginx)
-    ssh Eadu 'cd /mnt/ssd/docker/infra && docker compose down --remove-orphans && docker compose up -d'
     
     # Start the new health dashboard stack
     ssh Eadu 'cd /mnt/ssd/docker/eufy && docker compose up -d --build'
