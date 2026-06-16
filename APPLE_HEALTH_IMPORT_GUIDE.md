@@ -20,14 +20,14 @@ Because InfluxDB is a time-series database that uses the record timestamp, measu
 2. **Move the File to the Project Directory:**
    - Move or copy the exported zip file into the project's dedicated ingestion folder:
      ```
-     /Users/gary/syncdata/Sync/dev/eufy-scales/Apple_Health/
+     /Users/gary/syncdata/Sync/dev/health/Apple_Health/
      ```
    - Ensure the file is exactly named **`export.zip`**. (If it exported with a date like `export 15Jun2026.zip`, rename it to `export.zip` so the ingestion script can find it).
 
 3. **Run the Ingestion Container:**
    - Open your terminal and navigate to the project directory:
      ```bash
-     cd /Users/gary/syncdata/Sync/dev/eufy-scales
+     cd /Users/gary/syncdata/Sync/dev/health
      ```
    - Start the ingest container manually (it is set to `restart: "no"` by default):
      ```bash

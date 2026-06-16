@@ -9,15 +9,15 @@ git commit -m "$COMMIT_MSG"
 git push
 
 echo "--- 2. Syncing files to Eadu (DietPi) via rsync ---"
-rsync -avz --exclude 'legacy_eufy' --exclude '.git' ./ Eadu:/mnt/ssd/docker/eufy/
+rsync -avz --exclude 'legacy_eufy' --exclude '.git' ./ Eadu:/mnt/ssd/docker/health/
 
 if [ $? -eq 0 ]; then
     echo "--- 3. Restarting containers on Eadu ---"
     # Stop old legacy health stack if it was running and remove orphans
-    ssh Eadu 'cd /mnt/ssd/docker/eufy && docker compose down --remove-orphans'
+    ssh Eadu 'cd /mnt/ssd/docker/health && docker compose down --remove-orphans'
     
     # Start the new health dashboard stack
-    ssh Eadu 'cd /mnt/ssd/docker/eufy && docker compose up -d --build'
+    ssh Eadu 'cd /mnt/ssd/docker/health && docker compose up -d --build'
     
     # Reload Nginx to ensure it picks up any new IP addresses for the eufy containers
     ssh Eadu 'docker exec global_nginx nginx -s reload'
