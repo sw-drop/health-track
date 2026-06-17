@@ -3,3 +3,4 @@ __pycache__/
 ble-scale-sync/
 .DS_Store
 *.zip
+.env

@@ -8,7 +8,7 @@ services:
       - ./html:/html:rw
     environment:
       - INFLUX_URL=http://influxdb:8086
-      - INFLUX_TOKEN=my-super-secret-auth-token
+      - INFLUX_TOKEN=${INFLUX_TOKEN}
       - INFLUX_ORG=my-org
       - INFLUX_BUCKET=health
     restart: unless-stopped
@@ -22,7 +22,7 @@ services:
       - ./Apple_Health:/data:ro
     environment:
       - INFLUX_URL=http://influxdb:8086
-      - INFLUX_TOKEN=my-super-secret-auth-token
+      - INFLUX_TOKEN=${INFLUX_TOKEN}
       - INFLUX_ORG=my-org
       - INFLUX_BUCKET=health
     restart: "no"
