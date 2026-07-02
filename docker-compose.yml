@@ -11,6 +11,7 @@ services:
       - INFLUX_TOKEN=${INFLUX_TOKEN}
       - INFLUX_ORG=my-org
       - INFLUX_BUCKET=health
+      - PYTHONUNBUFFERED=1
     restart: unless-stopped
     networks:
       - global_infra
@@ -27,6 +28,7 @@ services:
       - INFLUX_TOKEN=${INFLUX_TOKEN}
       - INFLUX_ORG=my-org
       - INFLUX_BUCKET=health
+      - PYTHONUNBUFFERED=1
     restart: unless-stopped
     networks:
       - global_infra
