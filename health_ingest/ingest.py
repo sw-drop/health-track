@@ -115,27 +115,16 @@ def process_workout_routes(write_api, extract_dir):
         write_api.write(bucket=INFLUX_BUCKET, record=points)
     print("Workout routes processed.")
 
-def main():
-    print("Starting Apple Health safe ingestion with K0rventen formatters...")
-    while True:
-        if os.path.exists(ZIP_PATH):
-            print(f"Found {ZIP_PATH}, starting processing...")
-            break
-        print(f"Waiting for {ZIP_PATH}...")
-        time.sleep(5)
-        
-    client = InfluxDBClient(url=INFLUX_URL, token=INFLUX_TOKEN, org=INFLUX_ORG)
-    write_api = client.write_api(write_options=SYNCHRONOUS)
-
+def ingest_file(zip_path, write_api) -> bool:
     with tempfile.TemporaryDirectory() as temp_dir:
         print("Extracting export.xml and routes from zip...")
-        with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(temp_dir)
             
         export_xml_path = os.path.join(temp_dir, 'apple_health_export', 'export.xml')
         if not os.path.exists(export_xml_path):
             print("export.xml not found inside the zip!")
-            return
+            return False
 
         process_workout_routes(write_api, temp_dir)
 
@@ -186,6 +175,51 @@ def main():
             write_api.write(bucket=INFLUX_BUCKET, record=source_points)
 
         print("Ingestion complete!")
+        return True
+
+def rename_processed_file(zip_path, success=True):
+    dir_name = os.path.dirname(zip_path)
+    base_name = "export" if success else "export_failed"
+    date_str = datetime.now().strftime("%d%b%Y")
+    new_name = f"{base_name}_{date_str}.zip"
+    new_path = os.path.join(dir_name, new_name)
+    
+    counter = 1
+    while os.path.exists(new_path):
+        new_name = f"{base_name}_{date_str}_{counter}.zip"
+        new_path = os.path.join(dir_name, new_name)
+        counter += 1
+        
+    print(f"Renaming {zip_path} to {new_path}...")
+    try:
+        os.rename(zip_path, new_path)
+        print("Rename complete.")
+    except Exception as e:
+        print(f"Error renaming file: {e}")
+
+def main():
+    print("Starting Apple Health automatic ingestion daemon...")
+    print(f"Watching for {ZIP_PATH} (checking every 120 seconds)...")
+    
+    client = InfluxDBClient(url=INFLUX_URL, token=INFLUX_TOKEN, org=INFLUX_ORG)
+    write_api = client.write_api(write_options=SYNCHRONOUS)
+
+    while True:
+        if os.path.exists(ZIP_PATH):
+            print(f"Found {ZIP_PATH}, starting processing...")
+            # Wait 5 seconds to let writing finish
+            time.sleep(5)
+            
+            success = False
+            try:
+                success = ingest_file(ZIP_PATH, write_api)
+            except Exception as e:
+                print(f"Ingestion crashed with error: {e}")
+                
+            rename_processed_file(ZIP_PATH, success=success)
+            print(f"Sleeping before next check... Watching for {ZIP_PATH}...")
+        
+        time.sleep(120)
 
 if __name__ == "__main__":
     main()

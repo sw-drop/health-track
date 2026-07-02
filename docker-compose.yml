@@ -15,20 +15,24 @@ services:
     networks:
       - global_infra
 
+    labels:
+      - io.portainer.accesscontrol.users=agent
   health_ingest:
     build: ./health_ingest
     container_name: health_ingest
     volumes:
-      - ./Apple_Health:/data:ro
+      - ./Apple_Health:/data
     environment:
       - INFLUX_URL=http://influxdb:8086
       - INFLUX_TOKEN=${INFLUX_TOKEN}
       - INFLUX_ORG=my-org
       - INFLUX_BUCKET=health
-    restart: "no"
+    restart: unless-stopped
     networks:
       - global_infra
 
+    labels:
+      - io.portainer.accesscontrol.users=agent
 networks:
   global_infra:
     external: true
