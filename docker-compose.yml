@@ -13,6 +13,8 @@ services:
       - INFLUX_BUCKET=health
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
+    ports:
+      - "8090:5000"
     networks:
       - global_infra
 
