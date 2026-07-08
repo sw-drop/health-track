@@ -34,16 +34,13 @@ Use the deployment script to push code changes:
 This script will commit your code to Git, rsync it to the server, and restart the containers.
 
 **Ingesting Data (Important!):**
-Do **not** use `deploy.sh` to transfer Apple Health data, as it will commit the massive zip file to the Git repository. Instead, manually transfer the file and trigger ingestion:
+Do **not** use `deploy.sh` to transfer Apple Health data, as it will commit the massive zip file to the Git repository. Instead, upload it directly using rsync:
 
 ```bash
-# 1. Safely wipe the existing data in the health bucket (if required to prevent duplicates)
-# 2. Rsync the data directly to the volume without git
-rsync -avz "Apple_Health/export 15Jun2026.zip" Eadu:/mnt/ssd/docker/eufy/Apple_Health/export.zip
-
-# 3. Trigger the background worker
-ssh Eadu 'docker start health_ingest'
+# Rsync the data directly to the daemon's directory on the server
+rsync -avz --progress "/path/to/local/export.zip" Eadu:/mnt/ssd/docker/health/Apple_Health/export.zip
 ```
+The watchdog daemon running in the `health_ingest` container checks this folder every 2 minutes. Once it detects `export.zip`, it will automatically ingest the data into InfluxDB and rename the file to `export_ddmmmyyyy.zip` upon completion. No manual container start is required.
 
 ## UI Features & Data Visualization
 
