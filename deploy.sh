@@ -9,7 +9,7 @@ git commit -m "$COMMIT_MSG"
 git push
 
 echo "--- 2. Syncing files to Eadu (DietPi) via rsync ---"
-rsync -avz --exclude 'legacy_eufy' --exclude '.git' ./ Eadu:/mnt/ssd/docker/health/
+rsync -avz --delete --exclude 'legacy_eufy' --exclude '.git' --exclude 'Apple_Health/' --exclude 'backups/' ./ Eadu:/mnt/ssd/docker/health/
 
 if [ $? -eq 0 ]; then
     echo "--- 3. Restarting containers on Eadu ---"

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Hub Dashboard</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="header card">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Health Hub</h1>
+                </div>
+                <div class="user-profile">
+                    <span>Gary</span>
+                    <div class="avatar">G</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="grid-container">
+            <!-- Main Chart Area -->
+            <section class="main-chart-card card">
+                <div class="card-header">
+                    <div>
+                        <h2>Weight Tracker</h2>
+                        <div class="current-stat" id="current-weight">-- kg</div>
+                    </div>
+                    <div class="time-filters">
+                        <button class="time-filter" data-range="7">7D</button>
+                        <button class="time-filter" data-range="30">30D</button>
+                        <button class="time-filter active" data-range="90">90D</button>
+                        <button class="time-filter" data-range="365">1Y</button>
+                        <button class="time-filter" data-range="all">MAX</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="weightChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Smaller Stat Cards -->
+            <section class="stat-cards">
+                <div class="stat-card card">
+                    <h3>Body Fat %</h3>
+                    <div class="stat-value" id="current-body-fat">--%</div>
+                    <div class="chart-container-mini">
+                        <canvas id="bodyFatChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="stat-card card">
+                    <h3>Muscle Mass</h3>
+                    <div class="stat-value" id="current-muscle">-- kg</div>
+                    <div class="chart-container-mini">
+                        <canvas id="muscleChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="stat-card card">
+                    <h3>BMI</h3>
+                    <div class="stat-value" id="current-bmi">--</div>
+                    <div class="chart-container-mini">
+                        <canvas id="bmiChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="stat-card card">
+                    <h3>Bone Mass</h3>
+                    <div class="stat-value" id="current-bone">-- kg</div>
+                    <div class="chart-container-mini">
+                        <canvas id="boneChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

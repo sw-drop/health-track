@@ -1,6 +1,6 @@
-# Apple Health & Eufy Dashboard
+# Apple Health Dashboard
 
-A custom health dashboard that visualizes Apple Health data (which also contains synchronized Eufy scale data), featuring an interactive UI with tracking charts, sleep timelines, and secure data obfuscation.
+A custom health dashboard that visualizes Apple Health data, featuring an interactive UI with tracking charts, sleep timelines, and secure data obfuscation.
 
 ## Project Architecture
 
@@ -47,7 +47,7 @@ The watchdog daemon running in the `health_ingest` container checks this folder 
 The dashboard visualizes core metrics imported from Apple Health, such as:
 - **Sleep & Rest**: Sleep scoring, timelines, and phase analysis.
 - **Vitals & Activity**: Heart Rate, Step Count, Energy Burned, etc.
-- **Body Measurements**: Weight, Body Fat % (synced from Eufy).
+- **Body Measurements**: Weight, Body Fat %.
 
 ### Missing Data & Chart Rendering
 - **Chronological X-Axis**: The charts utilize the `chartjs-adapter-date-fns` library to enforce a strict `time` scale instead of a `category` scale, ensuring gaps in data are proportionally rendered.
